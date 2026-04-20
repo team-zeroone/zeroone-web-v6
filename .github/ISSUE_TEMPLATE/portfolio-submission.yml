@@ -44,10 +44,10 @@ body:
     validations:
       required: true
   - type: input
-    id: github_url
+    id: source_url
     attributes:
-      label: GitHub URL
-      placeholder: https://github.com/team-zeroone/...
+      label: Source URL (GitHub / Figma)
+      placeholder: https://github.com/ or https://figma.com/
     validations:
       required: false
   - type: input

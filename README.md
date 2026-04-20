@@ -38,7 +38,7 @@ date: "2026-04-20T18:59:11.621Z" # Dynamically injected timestamp of creation!
 excerpt: "Master French Vocabulary with AI" # Piped straight from the short-excerpt.
 image: "https://images.pexels.com/..." # Read the thumbnail URL directly.
 stack: "Figma, Flutter, FastAPI, Kafka" # Parsed the stack list.
-github: "_No response_" # Blank if not provided.
+source: "_No response_" # Blank if not provided. Link to Figma or GitHub.
 live: "https://www.lexigram.ai/" # Read the live URL properly.
 ---
 ```

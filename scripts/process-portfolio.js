@@ -50,7 +50,7 @@ Raw Data:
 - Thumbnail: ${data.thumbnail}
 - Excerpt: ${data.excerpt}
 - Tech Stack: ${data.stack}
-- GitHub: ${data.github_url}
+- Source/Figma/GitHub: ${data.source_url}
 - Live Link: ${data.live_url}
 - Brain Dump / Details: ${data.details}
 
@@ -67,7 +67,7 @@ date: "${new Date().toISOString()}"
 excerpt: "${data.excerpt}"
 image: "${data.thumbnail || ''}"
 stack: "${data.stack}"
-github: "${data.github_url || ''}"
+source: "${data.source_url || ''}"
 live: "${data.live_url || ''}"
 ---
 
@@ -130,7 +130,7 @@ function parseIssueBody(body) {
     else if (header.includes('short excerpt')) data.excerpt = content;
     else if (header.includes('full details')) data.details = content;
     else if (header.includes('tech stack')) data.stack = content;
-    else if (header.includes('github url')) data.github_url = content;
+    else if (header.includes('source url') || header.includes('github url')) data.source_url = content;
     else if (header.includes('live website url')) data.live_url = content;
   });
 

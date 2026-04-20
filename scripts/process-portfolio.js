@@ -131,7 +131,10 @@ function parseIssueBody(body) {
     
     if (header.includes('project title')) data.title = content;
     else if (header.includes('project type')) data.type = content;
-    else if (header.includes('thumbnail url')) data.thumbnail = content;
+    else if (header.includes('thumbnail')) {
+        const match = content.match(/(?:!\[.*?\]\((.*?)\))|(http[^\s]+)/);
+        data.thumbnail = match ? (match[1] || match[2]) : content;
+    }
     else if (header.includes('short excerpt')) data.excerpt = content;
     else if (header.includes('full details')) data.details = content;
     else if (header.includes('tech stack')) data.stack = content;

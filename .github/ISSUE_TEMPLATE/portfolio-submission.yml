@@ -15,11 +15,11 @@ body:
         - Design
     validations:
       required: true
-  - type: input
+  - type: textarea
     id: thumbnail
     attributes:
-      label: Thumbnail URL
-      placeholder: https://example.com/image.png
+      label: Thumbnail (Drag & Drop or URL)
+      placeholder: "Drag an image here or paste a direct URL"
     validations:
       required: false
   - type: textarea

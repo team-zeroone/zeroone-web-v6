@@ -19,6 +19,20 @@ Once merged, the project will be automatically synced to the WordPress site.
 
 ---
 
+## 📄 Output Data Structure
+
+When our AI Agent processes your issue, it creates a Markdown file that serves as the perfect "Source of Truth" for your WordPress site. 
+
+The output is split into two critical sections:
+
+### 1. The YAML Frontmatter
+At the very top of the file, surrounded by `---`, is the metadata. This is structured data extracted directly from the form fields you filled out (Type, Excerpt, Live Links, Tech Stack, and Thumbnail Data). WordPress uses this structured data to populate the **Grid Cards** on the main portfolio listing page.
+
+### 2. The Markdown Body
+Below the frontmatter is the beautifully written article. The **Gemini AI** model takes your simple bullet points ("Brain Dump") and expands them into a professional, agency-quality narrative with proper headings, paragraphs, and formatting. When a user clicks your project card, WordPress displays this exact body segment as the full web page.
+
+---
+
 ## 🔄 How to Update or Delete
 
 ### To Update

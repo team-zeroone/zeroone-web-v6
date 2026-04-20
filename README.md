@@ -2,7 +2,7 @@
 
 This repository serves as the **Source of Truth** for the portfolio projects on [wp.zotech.xyz](https://wp.zotech.xyz/).
 
-## 🚀 How to Add a New Project (Agentic Workflow)
+## 🚀 How to Add a New Project
 
 We use an automated AI agent to keep our portfolio standard and professional. You don't need to write any code or Markdown manually!
 
@@ -15,6 +15,8 @@ We use an automated AI agent to keep our portfolio standard and professional. Yo
 7.  **Approval:** Review the generated Markdown file in the PR. If it looks good, click **Merge Pull Request**.
 
 Once merged, the project will be automatically synced to the WordPress site.
+
+---
 
 ## 🔄 How to Update or Delete
 
@@ -29,21 +31,5 @@ Once merged, the project will be automatically synced to the WordPress site.
 
 ---
 
-## 🛠️ System Setup (For Admins)
-
-### Gemini API Key
-The workflow requires a Gemini API key to function.
-1.  Obtain a key from [Google AI Studio](https://aistudio.google.com/).
-2.  Add it to this repository's **Secrets**:
-    - Settings -> Secrets and variables -> Actions
-    - New repository secret
-    - Name: `GEMINI_API_KEY`
-    - Value: `YOUR_API_KEY`
-
-### Local Development
-If you need to work on the script locally:
-```bash
-npm install
-# Set GEMINI_API_KEY environment variable
-node scripts/process-portfolio.js
-```
+## 🛠️ Administrative Information
+For instructions on setting up the API keys, configuring workflow permissions, or local development, see [TECHNICAL.md](./TECHNICAL.md).

@@ -16,6 +16,17 @@ We use an automated AI agent to keep our portfolio standard and professional. Yo
 
 Once merged, the project will be automatically synced to the WordPress site.
 
+## 🔄 How to Update or Delete
+
+### To Update
+- **Option A (AI Help):** Go to the original **Issue** for the project, click **Edit**, modify your notes, and save. The agent will open a new PR with revised wording.
+- **Option B (Manual):** Go into the `content/portfolio/` folder, open the specific `.md` file, and edit it directly using the GitHub pencil icon.
+
+### To Delete
+- Go to the `content/portfolio/` folder.
+- Open the `.md` file for the project you wish to remove.
+- Click the **...** menu and select **Delete file**, then commit the change.
+
 ---
 
 ## 🛠️ System Setup (For Admins)

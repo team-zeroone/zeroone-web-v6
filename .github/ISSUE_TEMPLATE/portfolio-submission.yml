@@ -3,6 +3,10 @@ description: Submit a new project to the portfolio using the Agentic Workflow.
 title: "[New Portfolio]: "
 labels: ["portfolio"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! If you're unsure how this works, see the [Portfolio Manager Guide](https://github.com/team-zeroone/zeroone-web-v6#readme).
   - type: input
     id: title
     attributes:

@@ -43,6 +43,23 @@ If you need to work on the script or test it locally:
     node scripts/process-portfolio.js
     ```
 
+---
+
+## 🖼️ Image Handling & Security
+
+### Authenticated Asset Sync
+When users drag and drop images into GitHub Issues, they are stored on GitHub's secure servers (e.g., `user-attachments`). These URLs are private and will return 404 for anyone outside of GitHub.
+
+To handle this, our Sync Script:
+1. Uses the `GITHUB_TOKEN` to act as an authenticated user.
+2. Formats a `GET` request with an `Authorization` header to download the private asset.
+3. Automatically uploads the binary data to the **WordPress Media Library**.
+4. Replaces the private GitHub URL in the WordPress post with the new, public WordPress URL.
+
+This ensures images are stored securely during submission but are fully visible to the public once the project is "Published" on WordPress.
+
+---
+
 ## 🏗️ Architecture
 - **Issue Template:** `.github/ISSUE_TEMPLATE/portfolio-submission.yml` (The GUI Form)
 - **Workflow:** `.github/workflows/agent-portfolio.yml` (The Pipeline)

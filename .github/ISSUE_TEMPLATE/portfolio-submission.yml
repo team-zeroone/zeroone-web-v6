@@ -6,9 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please enter the **Project Name** in the "Add a title" box above. 
-        
-        If you're unsure how this works, see the [Portfolio Manager Guide](https://github.com/team-zeroone/zeroone-web-v6#readme).
+        Thanks for contributing! If you're unsure how this works, see the [Portfolio Manager Guide](https://github.com/team-zeroone/zeroone-web-v6#readme).
   - type: dropdown
     id: type
     attributes:

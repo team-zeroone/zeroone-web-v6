@@ -1,0 +1,63 @@
+name: New Portfolio Project
+description: Submit a new project to the portfolio using the Agentic Workflow.
+title: "[New Portfolio]: "
+labels: ["portfolio"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Project Title
+      placeholder: e.g. ZeroOne Web v6
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Project Type
+      options:
+        - Tech
+        - Design
+    validations:
+      required: true
+  - type: input
+    id: thumbnail
+    attributes:
+      label: Thumbnail URL
+      placeholder: https://example.com/image.png
+    validations:
+      required: false
+  - type: textarea
+    id: excerpt
+    attributes:
+      label: Short Excerpt
+      placeholder: A brief one-liner for the grid card.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Full Details (Brain Dump)
+      placeholder: Paste your rough notes, features, and everything Gemini should know.
+    validations:
+      required: true
+  - type: input
+    id: stack
+    attributes:
+      label: Tech Stack
+      placeholder: e.g. React, Node.js, AWS
+    validations:
+      required: true
+  - type: input
+    id: github_url
+    attributes:
+      label: GitHub URL
+      placeholder: https://github.com/team-zeroone/...
+    validations:
+      required: false
+  - type: input
+    id: live_url
+    attributes:
+      label: Live Website URL
+      placeholder: https://...
+    validations:
+      required: false

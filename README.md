@@ -61,5 +61,21 @@ Below the frontmatter is the beautifully written article. The **Gemini AI** mode
 
 ---
 
+## 💡 FAQ & Good to Know
+
+- **Do I need to reopen a closed issue to update a project?**
+  No! Even if a project issue was closed months ago, exactly matching the workflow, clicking **Edit** on the issue description and saving your changes will instantly wake up the AI Agent. It will open a brand new Pull Request to update the existing file.
+  
+- **What if I forget to add a Thumbnail URL?**
+  The AI Agent is designed to be forgiving. If you skip the thumbnail, the Agent will automatically inject a sleek default placeholder image (`ui.shadcn.com/placeholder.svg`) so your web grid never breaks.
+
+- **Can I edit the Markdown files manually?**
+  Yes! If the AI Agent makes a tiny typo, you can navigate straight to `content/portfolio/` and use the GitHub pencil icon to fix the typo yourself. Just remember: if you ever edit the **original GitHub Issue** again in the future, the Agent will overwrite your manual file tweaks.
+
+- **Why didn't my Pull Request generate?**
+  Ensure that the **`portfolio`** label is attached to your issue. Our template adds it automatically, but if it gets removed, the AI Agent will intentionally skip the workflow to keep your repository clean.
+
+---
+
 ## 🛠️ Administrative Information
 For instructions on setting up the API keys, configuring workflow permissions, or local development, see [TECHNICAL.md](./TECHNICAL.md).

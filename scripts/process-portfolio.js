@@ -30,6 +30,11 @@ async function run() {
         data.title = issue.title.replace(/^\[New Portfolio\]:\s*/i, '').trim();
     }
 
+    // Default to a placeholder if thumbnail is missing
+    if (!data.thumbnail || data.thumbnail === '_No response_') {
+        data.thumbnail = 'https://ui.shadcn.com/placeholder.svg';
+    }
+
     console.log('Parsed data:', JSON.stringify(data, null, 2));
 
     // Initialize Gemini

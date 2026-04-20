@@ -25,6 +25,11 @@ async function run() {
     const body = issue.body;
     const data = parseIssueBody(body);
 
+    // Use issue title as project title (stripping the template prefix)
+    if (!data.title || data.title === '_No response_') {
+        data.title = issue.title.replace(/^\[New Portfolio\]:\s*/i, '').trim();
+    }
+
     console.log('Parsed data:', JSON.stringify(data, null, 2));
 
     // Initialize Gemini

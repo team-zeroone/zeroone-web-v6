@@ -1,6 +1,6 @@
 # ZeroOne Portfolio Manager
 
-This repository serves as the **Source of Truth** for the portfolio projects on [wp.zotech.xyz](https://wp.zotech.xyz/).
+This repository serves as the **Source of Truth** for the portfolio projects on [zotech.xyz](https://zotech.xyz/).
 
 ## 🚀 How to Add a New Project
 
@@ -74,6 +74,19 @@ Below the frontmatter is the beautifully written article. The **Gemini AI** mode
 
 - **Why didn't my Pull Request generate?**
   Ensure that the **`portfolio`** label is attached to your issue. Our template adds it automatically, but if it gets removed, the AI Agent will intentionally skip the workflow to keep your repository clean.
+
+---
+
+## 🩺 Something Not Working?
+
+If images aren't syncing or you see errors in GitHub Actions, run the built-in diagnostic tool locally:
+
+```bash
+npm install
+node scripts/diagnose.js
+```
+
+This will test your API connection, image downloads, and WordPress uploads step-by-step. For full details, see [TECHNICAL.md](./TECHNICAL.md#-troubleshooting).
 
 ---
 

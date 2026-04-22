@@ -49,24 +49,33 @@ If you need to work on the script or test it locally:
 
 ## 🖼️ Image Handling & Security
 
-### Authenticated Asset Sync
-When users drag and drop images into GitHub Issues, they are stored on GitHub's secure servers (e.g., `user-attachments`). These URLs are private and will return 404 for anyone outside of GitHub.
+### Download Strategy (Double-Try)
+When users drag and drop images into GitHub Issues, they are stored on GitHub's secure servers (e.g., `user-attachments`). Our sync script uses a resilient **Double-Try** download strategy:
 
-To handle this, our Sync Script:
-1. Uses the `GITHUB_TOKEN` to act as an authenticated user.
-2. Formats a `GET` request with an `Authorization` header to download the private asset.
-3. Automatically uploads the binary data to the **WordPress Media Library**.
-4. Replaces the private GitHub URL in the WordPress post with the new, public WordPress URL.
+1.  **Pass 1 (Anonymous):** Attempts to download the image without any token, using a browser-like `User-Agent` header. This works for most public assets.
+2.  **Pass 2 (Authenticated):** If Pass 1 fails (403/404), the script retries using the `GITHUB_TOKEN` for authenticated access.
+3.  **503 Retry:** Both passes include automatic retries with a 2-second delay if GitHub returns a `503 Service Unavailable`.
 
-This ensures images are stored securely during submission but are fully visible to the public once the project is "Published" on WordPress.
+### Image Optimization
+Before uploading to WordPress, images are automatically optimized using `sharp`:
+-   **Resizing:** Images wider than 1200px are scaled down.
+-   **Compression:** Converted to an optimized format, drastically reducing file size (e.g., 8MB → 350KB).
+-   This prevents WordPress from timing out or crashing during thumbnail generation.
+
+### Upload to WordPress
+The optimized image is uploaded to the **WordPress Media Library** via the REST API and set as the post's **Featured Image** (`featured_media`). The upload step also includes retry logic for `503` errors from the hosting server.
 
 ---
 
 ## 🏗️ Architecture
-- **Issue Template:** `.github/ISSUE_TEMPLATE/portfolio-submission.yml` (The GUI Form)
-- **Workflow:** `.github/workflows/agent-portfolio.yml` (The Pipeline)
-- **Processor:** `scripts/process-portfolio.js` (The AI Agent)
-- **Sync Tool:** `scripts/sync-wordpress.js` (The WordPress Connection)
+| File | Purpose |
+| :--- | :--- |
+| `.github/ISSUE_TEMPLATE/portfolio-submission.yml` | The GUI Form for submitting new projects. |
+| `.github/workflows/agent-portfolio.yml` | The AI Agent Pipeline (Issue → AI → PR). |
+| `.github/workflows/sync-portfolio.yml` | The WordPress Sync Pipeline (Merge → WP). |
+| `scripts/process-portfolio.js` | The AI Agent (Gemini content generation with tiered fallback). |
+| `scripts/sync-wordpress.js` | The WordPress Syncer (markdown → REST API with image optimization). |
+| `scripts/diagnose.js` | Diagnostic tool for troubleshooting connectivity and auth issues. |
 
 ---
 
@@ -126,3 +135,29 @@ If you are building aheadless front end, you can fetch all projects at:
 To test the sync locally without affecting production:
 1. Set the `WP_API_URL` to your local environment.
 2. Run `node scripts/sync-wordpress.js --dry-run` to see the JSON payloads being sent without mutating the database.
+
+---
+
+## 🩺 Troubleshooting
+
+If the WordPress sync fails (images not uploading, 503 errors, auth failures), use the built-in diagnostic tool:
+
+```bash
+node scripts/diagnose.js
+```
+
+This will run four checks in sequence:
+
+| Step | What it Tests | Common Failures |
+| :--- | :--- | :--- |
+| 1 | WordPress REST API connectivity & auth | Invalid Application Password, wrong URL |
+| 2 | Image download from GitHub | GitHub rate limits, private repos |
+| 3 | Image optimization via Sharp | Corrupted image data, missing dependency |
+| 4 | Media upload to WordPress | Insufficient user permissions, server timeout |
+
+### Common Fixes
+
+-   **`rest_not_logged_in`**: Your Application Password is invalid. Generate a new one in **WP Admin → Users → Your Profile → Application Passwords**.
+-   **`503 Service Unavailable`**: Your hosting server is overloaded. Wait a few minutes and try again. The script has built-in retries.
+-   **`socket hang up`**: The image is too large for your server. The `sharp` optimization should handle this automatically — ensure the `sharp` package is installed (`npm install`).
+-   **LiteSpeed Auth Issue**: Ensure your `.htaccess` contains: `RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]`

@@ -15,9 +15,24 @@ async function run() {
 
     const octokit = github.getOctokit(githubToken);
     const { owner, repo } = github.context.repo;
-    const issue = github.context.payload.issue;
+    const issuePayload = github.context.payload.issue;
+    let issue;
 
-    if (!issue) throw new Error('No issue context found');
+    if (issuePayload) {
+        issue = issuePayload;
+    } else {
+        const issueNumber = process.env.ISSUE_NUMBER;
+        if (!issueNumber) throw new Error('No issue number provided for manual trigger');
+        console.log(`Fetching issue #${issueNumber} from GitHub API...`);
+        const { data: fetchedIssue } = await octokit.rest.issues.get({
+            owner,
+            repo,
+            issue_number: parseInt(issueNumber)
+        });
+        issue = fetchedIssue;
+    }
+
+    if (!issue) throw new Error('Could not find issue context');
 
     console.log(`Processing issue: ${issue.title}`);
 
@@ -121,6 +136,7 @@ live: "${data.live_url || ''}"
     core.setOutput('slug', slug);
     core.setOutput('action_label', actionLabel);
     core.setOutput('action_slug', actionSlug);
+    core.setOutput('issue_number', issue.number.toString());
 
   } catch (error) {
     core.setFailed(error.message);

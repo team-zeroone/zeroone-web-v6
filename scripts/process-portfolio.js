@@ -65,6 +65,7 @@ Your task is to take raw project notes and turn them into a professional, engagi
 Target language: English.
 Tone: Professional, Innovative, Sleek.
 Word count for description: ~150-250 words.
+CRITICAL: Do NOT use the em-dash character (—) in your output. Use standard dashes (-), colons, or commas instead.
 
 Raw Data:
 - Title: ${data.title}
@@ -135,8 +136,9 @@ live: "${data.live_url || ''}"
         }
     }
 
-    // Clean up markdown if Gemini wrapped it in code blocks
+    // Clean up markdown if Gemini wrapped it in code blocks or used em-dashes
     markdown = markdown.replace(/^```markdown\n/, '').replace(/\n```$/, '');
+    markdown = markdown.split('—').join('-');
 
     const slug = slugify(data.title, { lower: true });
     const filePath = `content/portfolio/${slug}.md`;

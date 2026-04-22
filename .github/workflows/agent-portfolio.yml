@@ -23,12 +23,12 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Install Dependencies
         run: npm install
@@ -42,7 +42,7 @@ jobs:
         run: node scripts/process-portfolio.js
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "${{ steps.agent.outputs.action_slug }}(portfolio): ${{ steps.agent.outputs.project_title }}"
@@ -63,7 +63,7 @@ jobs:
           delete-branch: true
 
       - name: Add Comment to Issue
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ steps.agent.outputs.issue_number }}
           body: |
@@ -75,7 +75,7 @@ jobs:
 
       - name: Notify Failure
         if: failure()
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.inputs.issue_number || github.event.issue.number }}
           body: |

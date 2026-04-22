@@ -87,11 +87,15 @@ live: "${data.live_url || ''}"
     const systemPrompt = `You are a content writer for ZeroOne, a creative technology agency.
 Write professional, engaging portfolio project descriptions.
 Tone: innovative, confident, sleek. Not salesy or generic.
-Length: 150-250 words for the body content.
+Body length: 150-250 words.
+Excerpt length: 15-25 words. One sentence that captures the project's essence.
 Never use the em-dash character. Use standard dashes (-), colons, or commas instead.
-Return ONLY the raw Markdown body. No preamble, no explanation, no code fences, no frontmatter.
-Start directly with "# Title" on the first line.
-Use ### subheadings to break the content into logical sections.
+No preamble, no explanation, no code fences, no frontmatter.
+
+You MUST follow this exact output format:
+Line 1: EXCERPT: [your refined 15-25 word excerpt]
+Line 2: blank
+Line 3 onwards: the Markdown body, starting with "# Title"
 
 Example input:
 - Type: Tech
@@ -100,6 +104,8 @@ Example input:
 - Details: Built a real-time ride matching system. 50k+ users. Integrated Stripe payments and live GPS tracking.
 
 Example output:
+EXCERPT: A real-time ride-sharing platform connecting 50k+ urban commuters with drivers through intelligent geolocation matching.
+
 # QuickRide
 
 ### Smarter Commutes, One Tap Away
@@ -119,13 +125,23 @@ A polished, production-grade mobility platform that proves great UX and robust e
 - Stack: ${data.stack}
 - Details: ${enrichedDetails}`;
 
-    // Optimization #6: Output validation
-    function isValidBody(text) {
+    // Output validation: must contain EXCERPT: line and body starting with #
+    function isValidOutput(text) {
         const trimmed = text.trim();
-        return trimmed.startsWith('#') && trimmed.length > 200;
+        return trimmed.startsWith('EXCERPT:') && trimmed.includes('\n#') && trimmed.length > 250;
+    }
+
+    // Parse EXCERPT: line from model output
+    function parseOutput(text) {
+        const lines = text.trim().split('\n');
+        const excerptLine = lines[0];
+        const excerpt = excerptLine.replace(/^EXCERPT:\s*/, '').trim();
+        const body = lines.slice(1).join('\n').trim();
+        return { excerpt, body };
     }
 
     let generatedBody = '';
+    let refinedExcerpt = '';
     let successfulModel = '';
 
     for (const modelId of MODELS_TO_TRY) {
@@ -148,14 +164,16 @@ A polished, production-grade mobility platform that proves great UX and robust e
                     text = text.replace(/^```(?:markdown)?\n?/, '').replace(/\n?```$/, '');
                     text = text.split('\u2014').join('-');
 
-                    // Optimization #6: Validate before accepting
-                    if (!isValidBody(text)) {
-                        console.warn(`Validation failed (length: ${text.trim().length}, starts with #: ${text.trim().startsWith('#')}). Retrying...`);
+                    // Validate before accepting
+                    if (!isValidOutput(text)) {
+                        console.warn(`Validation failed. Retrying...`);
                         if (i < maxRetries - 1) continue;
                         throw new Error('Model returned invalid output after all retries');
                     }
 
-                    generatedBody = text;
+                    const parsed = parseOutput(text);
+                    generatedBody = parsed.body;
+                    refinedExcerpt = parsed.excerpt;
                     successfulModel = modelId;
                     break;
                 } catch (err) {
@@ -178,8 +196,15 @@ A polished, production-grade mobility platform that proves great UX and robust e
         }
     }
 
-    // Optimization #4: Assemble final file from pre-filled frontmatter + generated body
-    const markdown = frontmatter + '\n\n' + generatedBody.trim() + '\n';
+    // Assemble final file: use AI-refined excerpt in frontmatter
+    const finalExcerpt = refinedExcerpt || data.excerpt;
+    const finalFrontmatter = frontmatter.replace(
+        `excerpt: "${data.excerpt}"`,
+        `excerpt: "${finalExcerpt.replace(/"/g, '\\"')}"`
+    );
+    console.log(`Refined excerpt: "${finalExcerpt}"`);
+
+    const markdown = finalFrontmatter + '\n\n' + generatedBody.trim() + '\n';
 
     const filePath = `content/portfolio/${slug}.md`;
     

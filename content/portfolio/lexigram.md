@@ -2,22 +2,21 @@
 title: "Lexigram"
 slug: "lexigram"
 type: "Tech"
-date: "2026-04-22T15:30:51.749Z"
-excerpt: "Lexigram is a gamified mobile app that helps users learn French vocabulary through interactive quizzes, puzzles, and flashcards, with structured progress tracking and spaced repetition for effective, consistent learning."
+date: "2026-04-22T16:04:16.863Z"
+excerpt: "Lexigram is an interactive mobile language platform that gamifies French vocabulary acquisition through spaced repetition, real-time quizzes, and intuitive progress tracking."
 image: "https://github.com/user-attachments/assets/19d3d3d0-8c21-45c4-a28f-bd909a2bd008"
 stack: "Figma, Flutter, FastAPI, Kafka"
 source: "https://www.figma.com/design/hbzaHVh4AKOqmPd0brYJvI/Lexigram-V2?node-id=0-1&t=GWS5HwAGKVkqWxuz-1"
-live: "https://www.lexigram.ai/"
+live: "https://www.lexigram.ai"
 ---
 
-# Lexigram: Redefining Language Acquisition
+# Lexigram
 
-Language learning often falters at the intersection of boredom and inconsistency. At ZeroOne, we developed **Lexigram** to dismantle these barriers, transforming the arduous task of vocabulary building into a sleek, gamified experience. Designed for learners at every proficiency level, Lexigram bridges the gap between theoretical study and real-world fluency.
+### Mastering French, One Puzzle at a Time
+Language learning often stalls due to lack of engagement. We developed Lexigram to solve this by transforming vocabulary building into a fluid, gamified experience. By blending interactive puzzles, flashcards, and dynamic quizzes, the app keeps users continuously challenged and mentally stimulated as they progress through different proficiency levels.
 
-### The Power of Interactive Learning
-Lexigram replaces static memorization with a dynamic ecosystem. By integrating interactive quizzes, intuitive puzzles, and high-retention flashcards, the app ensures that users remain deeply engaged. Our architecture centers on **spaced repetition algorithms**, which intelligently time review sessions to maximize long-term memory retention, ensuring that vocabulary sticks.
+### Engineering for Retention
+We architected Lexigram with a mobile-first approach, leveraging Flutter to ensure a smooth, high-fidelity experience across all devices. The backend is built on FastAPI, enabling rapid data delivery, while Apache Kafka handles the complex event streaming required for real-time progress tracking and adaptive spaced repetition cycles. Every interaction is designed to optimize memory retention and reinforce natural language usage.
 
-### Engineering for Performance
-Under the hood, Lexigram is built for speed and reliability. Leveraging **Flutter** for a fluid, cross-platform UI and a robust **FastAPI** backend, the application handles complex data streams with ease. We utilized **Kafka** to manage real-time progress tracking, allowing users to visualize their growth through structured, granular analytics. 
-
-From the initial UI/UX concepts prototyped in **Figma** to the final deployment, Lexigram represents our commitment to blending pedagogical rigor with innovative tech. It isn't just an app—it is a sophisticated tool crafted for those who value both aesthetic precision and cognitive efficacy. Whether you are a casual learner or aiming for mastery, Lexigram makes consistent progress not only possible but enjoyable.
+### The Result
+Lexigram is more than just a digital dictionary. It is a sophisticated learning engine that turns the arduous task of language acquisition into an addictive, rewarding habit. Through clean UI design and robust backend infrastructure, we have created a tool that bridges the gap between casual study and true linguistic mastery.

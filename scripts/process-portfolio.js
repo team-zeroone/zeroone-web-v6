@@ -133,7 +133,13 @@ function parseIssueBody(body) {
     else if (header.includes('project type')) data.type = content;
     else if (header.includes('thumbnail')) {
         const match = content.match(/(?:!\[.*?\]\((.*?)\))|(http[^\s]+)/);
-        data.thumbnail = match ? (match[1] || match[2]) : content;
+        if (match) {
+            let url = match[1] || match[2];
+            // Strip trailing junk characters (quotes, backslashes, brackets)
+            data.thumbnail = url.replace(/["'\\\]\)]+$/, '');
+        } else {
+            data.thumbnail = content.trim();
+        }
     }
     else if (header.includes('short excerpt')) data.excerpt = content;
     else if (header.includes('full details')) data.details = content;

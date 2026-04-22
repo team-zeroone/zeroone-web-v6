@@ -183,20 +183,35 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
             return 999; // Dummy ID
         }
 
-        // 2. Upload to WP
+        // 2. Upload to WP (With Retry for 503s)
         const formData = new FormData();
         formData.append('file', Buffer.from(imageResponse.data), {
             filename: fileName,
             contentType: imageResponse.headers['content-type']
         });
 
-        const uploadResponse = await axios.post(`${WP_API_URL}/wp/v2/media`, formData, {
-            headers: {
-                ...wpHeaders,
-                ...formData.getHeaders(),
-                'User-Agent': 'ZeroOne-Portfolio-Agent/1.0'
+        let uploadResponse;
+        const maxUploadRetries = 2;
+        for (let j = 0; j < maxUploadRetries; j++) {
+            try {
+                console.log(`Uploading to WordPress Media...`);
+                uploadResponse = await axios.post(`${WP_API_URL}/wp/v2/media`, formData, {
+                    headers: {
+                        ...wpHeaders,
+                        ...formData.getHeaders(),
+                        'User-Agent': 'ZeroOne-Portfolio-Agent/1.0'
+                    }
+                });
+                break; // Success!
+            } catch (uploadErr) {
+                if (uploadErr.response?.status === 503 && j < maxUploadRetries - 1) {
+                    console.warn(`WordPress host busy (503). Retrying upload in 3s...`);
+                    await sleep(3000);
+                    continue;
+                }
+                throw uploadErr; // Fail if not a 503 or no retries left
             }
-        });
+        }
 
         console.log(`Image uploaded (ID: ${uploadResponse.data.id})`);
         return uploadResponse.data.id;

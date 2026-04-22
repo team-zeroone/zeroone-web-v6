@@ -111,12 +111,17 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders, targetApiUrl) {
         console.log(`Syncing image: ${imageUrl}`);
         
         // 1. Download image
-        const axiosOptions = { responseType: 'arraybuffer' };
+        const axiosOptions = { 
+            responseType: 'arraybuffer',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+        };
         
         // If it's a GitHub attachment, add authentication
         if (imageUrl.includes('github.com') || imageUrl.includes('githubusercontent.com')) {
             if (GITHUB_TOKEN) {
-                axiosOptions.headers = { 'Authorization': `token ${GITHUB_TOKEN}` };
+                axiosOptions.headers['Authorization'] = `token ${GITHUB_TOKEN}`;
             }
         }
 
@@ -146,7 +151,8 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders, targetApiUrl) {
         const uploadResponse = await axios.post(`${WP_API_URL}/wp/v2/media`, formData, {
             headers: {
                 ...wpHeaders,
-                ...formData.getHeaders()
+                ...formData.getHeaders(),
+                'User-Agent': 'ZeroOne-Portfolio-Agent/1.0'
             }
         });
 

@@ -5,6 +5,8 @@ const github = require('@actions/github');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const slugify = require('slugify');
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 async function run() {
   try {
     const geminiApiKey = process.env.GEMINI_API_KEY;
@@ -96,10 +98,22 @@ live: "${data.live_url || ''}"
 [Provide a structured, beautifully written description here based on the brain dump. Use headings if necessary.]
 `;
 
-    console.log('Sending request to Gemini...');
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    let markdown = response.text();
+    let markdown = '';
+    const maxRetries = 3;
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            console.log(`Sending request to Gemini (Attempt ${i + 1})...`);
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            markdown = response.text();
+            break;
+        } catch (err) {
+            if (i === maxRetries - 1) throw err;
+            const waitTime = Math.pow(2, i + 1) * 1000;
+            console.warn(`Gemini API error: ${err.message}. Retrying in ${waitTime/1000}s...`);
+            await sleep(waitTime);
+        }
+    }
 
     // Clean up markdown if Gemini wrapped it in code blocks
     markdown = markdown.replace(/^```markdown\n/, '').replace(/\n```$/, '');

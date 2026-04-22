@@ -6,6 +6,8 @@ const matter = require('gray-matter');
 const { marked } = require('marked');
 const FormData = require('form-data');
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 // Configuration from Environment Variables
 const WP_API_URL = process.env.WP_API_URL;
 const WP_USERNAME = process.env.WP_USERNAME;
@@ -56,7 +58,7 @@ async function syncToWordPress() {
             // 2. Handle Thumbnail / Featured Image
             let featuredImageId = null;
             if (data.image) {
-                featuredImageId = await syncFeaturedImage(data.image, slug, wpHeaders, WP_API_URL);
+                featuredImageId = await syncFeaturedImage(data.image, slug, wpHeaders);
             }
 
             // 3. Prepare Payload
@@ -104,28 +106,68 @@ async function syncToWordPress() {
 }
 
 /**
+ * Refined image downloader with anonymous/authenticated passes and 503 retry logic.
+ */
+async function downloadImageWithRetry(imageUrl, slug) {
+    const maxRetries = 2;
+    const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+    
+    // Pass 1: Try without token (GitHub often prefers this for public assets)
+    let lastError;
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            console.log(`Attempting anonymous download...`);
+            return await axios.get(imageUrl, { 
+                responseType: 'arraybuffer',
+                headers: { 'User-Agent': userAgent }
+            });
+        } catch (err) {
+            lastError = err;
+            if (err.response?.status === 503 && i < maxRetries - 1) {
+                console.warn('GitHub busy (503). Retrying in 2s...');
+                await sleep(2000);
+                continue;
+            }
+            break; 
+        }
+    }
+
+    // Pass 2: Try with token (If Pass 1 failed with 401/403/404 or unknown error)
+    if (GITHUB_TOKEN) {
+        console.log(`Anonymous download failed or blocked. Trying with GITHUB_TOKEN...`);
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                return await axios.get(imageUrl, { 
+                    responseType: 'arraybuffer',
+                    headers: { 
+                        'User-Agent': userAgent,
+                        'Authorization': `token ${GITHUB_TOKEN}`
+                    }
+                });
+            } catch (err) {
+                lastError = err;
+                if (err.response?.status === 503 && i < maxRetries - 1) {
+                    console.warn('GitHub busy (503). Retrying in 2s...');
+                    await sleep(2000);
+                    continue;
+                }
+                break;
+            }
+        }
+    }
+    
+    throw lastError || new Error('Image download failed');
+}
+
+/**
  * Syncs an image to the WP Media Library and returns the ID.
  */
-async function syncFeaturedImage(imageUrl, slug, wpHeaders, targetApiUrl) {
+async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
     try {
         console.log(`Syncing image: ${imageUrl}`);
         
         // 1. Download image
-        const axiosOptions = { 
-            responseType: 'arraybuffer',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            }
-        };
-        
-        // If it's a GitHub attachment, add authentication
-        if (imageUrl.includes('github.com') || imageUrl.includes('githubusercontent.com')) {
-            if (GITHUB_TOKEN) {
-                axiosOptions.headers['Authorization'] = `token ${GITHUB_TOKEN}`;
-            }
-        }
-
-        const imageResponse = await axios.get(imageUrl, axiosOptions);
+        const imageResponse = await downloadImageWithRetry(imageUrl, slug);
         
         let fileName = `${slug}.png`;
         try {

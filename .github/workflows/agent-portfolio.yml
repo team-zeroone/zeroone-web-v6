@@ -72,3 +72,15 @@ jobs:
             I have processed your submission and created a Pull Request with the structured Markdown content.
             
             Please review the changes here: [Check Pull Requests](${{ github.server_url }}/${{ github.repository }}/pulls)
+
+      - name: Notify Failure
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.inputs.issue_number || github.event.issue.number }}
+          body: |
+            ❌ **Agent Task Failed!**
+            
+            Something went wrong while processing your portfolio entry. This usually happens if the AI service is overloaded or if there is a connection issue.
+            
+            Review the logs here for details: [View Error Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})

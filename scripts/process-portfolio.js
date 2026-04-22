@@ -92,6 +92,11 @@ live: "${data.live_url || ''}"
     const slug = slugify(data.title, { lower: true });
     const filePath = `content/portfolio/${slug}.md`;
     
+    // Check if it's a new project or an update
+    const isUpdate = fs.existsSync(filePath);
+    const actionLabel = isUpdate ? 'Update' : 'New';
+    const actionSlug = isUpdate ? 'update' : 'add';
+
     // Ensure directory exists
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) {
@@ -114,6 +119,8 @@ live: "${data.live_url || ''}"
     core.setOutput('file_path', filePath);
     core.setOutput('project_title', data.title);
     core.setOutput('slug', slug);
+    core.setOutput('action_label', actionLabel);
+    core.setOutput('action_slug', actionSlug);
 
   } catch (error) {
     core.setFailed(error.message);

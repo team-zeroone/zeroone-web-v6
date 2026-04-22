@@ -62,23 +62,23 @@ async function run() {
     const MODELS_TO_TRY = ['gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
     const slug = slugify(data.title, { lower: true });
 
-    // Optimization #4: Pre-fill frontmatter in code. Model never touches structured data.
+    // Optimization #4: Pre-fill frontmatter in code.
     const frontmatter = `---
 title: "${data.title}"
 slug: "${slug}"
 type: "${data.type}"
 date: "${new Date().toISOString()}"
-excerpt: "${data.excerpt}"
+excerpt: "{EXCERPT_PLACEHOLDER}"
 image: "${data.thumbnail || ''}"
 stack: "${data.stack}"
 source: "${data.source_url || ''}"
 live: "${data.live_url || ''}"
 ---`;
 
-    // Optimization #5: Enrich sparse details with context from other fields
+    // Optimization #5: Enrich sparse details
     let enrichedDetails = data.details || '';
     if (!enrichedDetails || enrichedDetails.length < 50) {
-        enrichedDetails = `${data.excerpt || ''}. Built with ${data.stack || 'modern technologies'}. ${enrichedDetails}`;
+        enrichedDetails = `Built with ${data.stack || 'modern technologies'}. ${enrichedDetails}`;
     }
 
     // Optimization #1: System prompt separated from user content
@@ -88,38 +88,31 @@ live: "${data.live_url || ''}"
 Write professional, engaging portfolio project descriptions.
 Tone: innovative, confident, sleek. Not salesy or generic.
 Body length: 150-250 words.
-Excerpt length: 15-25 words. One sentence that captures the project's essence.
+Summary length: 15-25 words. One sharp sentence that captures the project's essence for a gallery card.
 Never use the em-dash character. Use standard dashes (-), colons, or commas instead.
 No preamble, no explanation, no code fences, no frontmatter.
 
 You MUST follow this exact output format:
-Line 1: EXCERPT: [your refined 15-25 word excerpt]
+Line 1: EXCERPT: [your refined 15-25 word summary]
 Line 2: blank
-Line 3 onwards: the Markdown body, starting directly with your first subheading or paragraph. Do NOT include the project title as an H1 header.
+Line 3 onwards: the Markdown body, starting directly with your first subheading or paragraph. Do NOT include the project title.
 
 Example input:
 - Type: Tech
-- Excerpt: A ride-sharing app for urban commuters.
 - Stack: React Native, Node.js, PostgreSQL
-- Details: Built a real-time ride matching system. 50k+ users. Integrated Stripe payments and live GPS tracking.
+- Details: Built a real-time ride matching system for urban commuters. 50k+ users. Integrated Stripe payments and live GPS tracking.
 
 Example output:
 EXCERPT: A real-time ride-sharing platform connecting 50k+ urban commuters with drivers through intelligent geolocation matching.
 
 ### Smarter Commutes, One Tap Away
 QuickRide reimagines urban transportation by connecting commuters with nearby drivers in real time. Built on React Native for seamless cross-platform performance, the app delivers sub-second ride matching powered by a custom geolocation engine.
-
-### Built for Scale
-With over 50,000 active users, the platform handles thousands of concurrent ride requests through a Node.js backend backed by PostgreSQL. We integrated Stripe for frictionless in-app payments and built a live GPS tracking system that keeps both riders and drivers informed at every step.
-
-### The Result
-A polished, production-grade mobility platform that proves great UX and robust engineering can coexist. QuickRide is fast, reliable, and ready for growth.`;
+...`;
 
     // Optimization #1 continued: User prompt is pure data, no instructions
     const userPrompt = `Write a portfolio description for this project:
 - Title: ${data.title}
 - Type: ${data.type}
-- Excerpt: ${data.excerpt}
 - Stack: ${data.stack}
 - Details: ${enrichedDetails}`;
 
@@ -195,10 +188,10 @@ A polished, production-grade mobility platform that proves great UX and robust e
     }
 
     // Assemble final file: use AI-refined excerpt in frontmatter
-    const finalExcerpt = refinedExcerpt || data.excerpt;
+    const finalExcerpt = refinedExcerpt || 'A professional showcase by ZeroOne Technologies.';
     const finalFrontmatter = frontmatter.replace(
-        `excerpt: "${data.excerpt}"`,
-        `excerpt: "${finalExcerpt.replace(/"/g, '\\"')}"`
+        '{EXCERPT_PLACEHOLDER}',
+        finalExcerpt.replace(/"/g, '\\"')
     );
     console.log(`Refined excerpt: "${finalExcerpt}"`);
 
@@ -258,7 +251,6 @@ function parseIssueBody(body) {
             data.thumbnail = content.trim();
         }
     }
-    else if (header.includes('short excerpt')) data.excerpt = content;
     else if (header.includes('full details')) data.details = content;
     else if (header.includes('tech stack')) data.stack = content;
     else if (header.includes('source url') || header.includes('github url')) data.source_url = content;

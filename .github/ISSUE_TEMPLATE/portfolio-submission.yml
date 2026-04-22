@@ -23,13 +23,6 @@ body:
     validations:
       required: false
   - type: textarea
-    id: excerpt
-    attributes:
-      label: Short Excerpt
-      placeholder: A brief one-liner for the grid card.
-    validations:
-      required: true
-  - type: textarea
     id: details
     attributes:
       label: Full Details (Brain Dump)

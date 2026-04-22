@@ -9,11 +9,11 @@ get_header(); ?>
     <main id="main" class="site-main" role="main">
         <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 40px;">
             
-            <header class="page-header" style="margin-bottom: 120px; max-width: 900px;">
-                <div style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.4em; color: #aab4c0; margin-bottom: 32px; font-weight: 500; opacity: 0.7;">
+            <header class="zot-header">
+                <div class="zot-kicker">
                     Selected Projects
                 </div>
-                <h1 class="page-title" style="font-family: 'Outfit', sans-serif; font-size: 4rem; font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; color: #ffffff;">
+                <h1 class="zot-page-title">
                     A collection of precision-engineered digital products.
                 </h1>
             </header>

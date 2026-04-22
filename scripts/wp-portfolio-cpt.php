@@ -66,7 +66,58 @@ function zot_portfolio_styles() {
             color: var(--zot-text);
             max-width: 1400px;
             margin: 0 auto;
-            padding: 40px 0;
+            padding: 40px 20px;
+        }
+
+        .zot-header {
+            margin-bottom: 80px;
+            max-width: 900px;
+        }
+
+        .zot-kicker {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: var(--zot-muted);
+            margin-bottom: 32px;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        .zot-page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 400;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .zot-entry-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(3rem, 10vw, 4.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 40px;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+        }
+
+        .zot-hero {
+            width: 100%;
+            height: clamp(300px, 60vh, 800px);
+            background: #111;
+            overflow: hidden;
+            border-bottom: 1px solid var(--zot-border);
+        }
+
+        .zot-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
         }
 
         /* Grid */
@@ -182,8 +233,15 @@ function zot_portfolio_styles() {
         .zot-meta-val { font-size: 0.9rem; color: #fff; }
         .zot-meta-val a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 
+        @media (max-width: 1024px) {
+            .zot-project-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        }
+
         @media (max-width: 768px) {
             .zot-project-grid { grid-template-columns: 1fr; }
+            .zot-header { margin-bottom: 60px; }
+            .zot-grid-container { padding: 40px 0; }
+            .zot-meta-bar { gap: 24px; padding: 20px 0; }
         }
     </style>
     <?php

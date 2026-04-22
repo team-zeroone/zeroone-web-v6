@@ -11,8 +11,8 @@ get_header(); ?>
     
     <!-- Hero Section -->
     <?php if ( has_post_thumbnail() ) : ?>
-        <div class="zot-hero" style="width: 100%; height: 60vh; background: #111; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.08);">
-            <?php the_post_thumbnail('full', array('style' => 'width: 100%; height: 100%; object-fit: cover; opacity: 0.8;')); ?>
+        <div class="zot-hero">
+            <?php the_post_thumbnail('full'); ?>
         </div>
     <?php endif; ?>
 
@@ -24,7 +24,7 @@ get_header(); ?>
             </a>
 
             <header class="entry-header">
-                <h1 class="entry-title" style="font-family: 'Outfit', sans-serif; font-size: 4.5rem; font-weight: 400; line-height: 1.1; margin-bottom: 40px; letter-spacing: -0.03em;">
+                <h1 class="zot-entry-title">
                     <?php the_title(); ?>
                 </h1>
             </header>

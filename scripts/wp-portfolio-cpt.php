@@ -35,7 +35,7 @@ function zot_register_portfolio_cpt() {
 
     register_post_type( 'portfolio', $args );
 
-    $meta_fields = array('stack', 'source', 'live');
+    $meta_fields = array('stack', 'source', 'live', 'hero_image_id');
     foreach ($meta_fields as $field) {
         register_post_meta('portfolio', $field, array(
             'show_in_rest' => true,

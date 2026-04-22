@@ -18,8 +18,15 @@ body:
   - type: textarea
     id: thumbnail
     attributes:
-      label: Thumbnail (Drag & Drop or URL)
+      label: Thumbnail (Grid Image - Drag & Drop or URL)
       placeholder: "Drag an image here or paste a direct URL"
+    validations:
+      required: false
+  - type: textarea
+    id: hero_image
+    attributes:
+      label: Hero Image (Optional - Drag & Drop or URL)
+      placeholder: "Used at the top of the project page. If blank, the thumbnail will be used."
     validations:
       required: false
   - type: textarea

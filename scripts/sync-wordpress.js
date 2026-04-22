@@ -62,6 +62,12 @@ async function syncToWordPress() {
                 featuredImageId = await syncFeaturedImage(data.image, slug, wpHeaders);
             }
 
+            // Also Handle Hero Image (if provided)
+            let heroImageId = null;
+            if (data.hero_image) {
+                heroImageId = await syncFeaturedImage(data.hero_image, `${slug}-hero`, wpHeaders);
+            }
+
             // 3. Prepare Payload
             const payload = {
                 title: data.title,
@@ -72,7 +78,8 @@ async function syncToWordPress() {
                 meta: {
                     stack: data.stack || '',
                     source: data.source || '',
-                    live: data.live || ''
+                    live: data.live || '',
+                    hero_image_id: heroImageId ? String(heroImageId) : ''
                 }
             };
 

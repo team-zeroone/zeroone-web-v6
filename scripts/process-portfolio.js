@@ -70,6 +70,7 @@ type: "${data.type}"
 date: "${new Date().toISOString()}"
 excerpt: "{EXCERPT_PLACEHOLDER}"
 image: "${data.thumbnail || ''}"
+hero_image: "${data.hero_image || ''}"
 stack: "${data.stack}"
 source: "${data.source_url || ''}"
 live: "${data.live_url || ''}"
@@ -249,6 +250,15 @@ function parseIssueBody(body) {
             data.thumbnail = url.replace(/["'\\\]\)]+$/, '');
         } else {
             data.thumbnail = content.trim();
+        }
+    }
+    else if (header.includes('hero image')) {
+        const match = content.match(/(?:!\[.*?\]\((.*?)\))|(http[^\s]+)/);
+        if (match) {
+            let url = match[1] || match[2];
+            data.hero_image = url.replace(/["'\\\]\)]+$/, '');
+        } else {
+            data.hero_image = content.trim();
         }
     }
     else if (header.includes('full details')) data.details = content;

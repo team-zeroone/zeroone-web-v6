@@ -10,9 +10,21 @@ get_header(); ?>
 <div id="primary" class="content-area" style="background-color: #222831; color: #ffffff; min-height: 100vh;">
     
     <!-- Hero Section -->
-    <?php if ( has_post_thumbnail() ) : ?>
+    <?php 
+    $hero_image_id = get_post_meta(get_the_ID(), 'hero_image_id', true);
+    $hero_image_url = '';
+    
+    if ($hero_image_id) {
+        $hero_image_url = wp_get_attachment_image_url($hero_image_id, 'full');
+    }
+    
+    if (!$hero_image_url && has_post_thumbnail()) {
+        $hero_image_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
+    }
+
+    if ( $hero_image_url ) : ?>
         <div class="zot-hero">
-            <?php the_post_thumbnail('full'); ?>
+            <img src="<?php echo esc_url($hero_image_url); ?>" alt="Project Hero Image">
         </div>
     <?php endif; ?>
 

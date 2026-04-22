@@ -194,8 +194,9 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
         const maxUploadRetries = 2;
         for (let j = 0; j < maxUploadRetries; j++) {
             try {
-                console.log(`Uploading to WordPress Media...`);
+                console.log(`Uploading to WordPress Media (This can take up to 2 minutes)...`);
                 uploadResponse = await axios.post(`${WP_API_URL}/wp/v2/media`, formData, {
+                    timeout: 120000, // 2-minute safety timeout
                     headers: {
                         ...wpHeaders,
                         ...formData.getHeaders(),
@@ -204,12 +205,16 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
                 });
                 break; // Success!
             } catch (uploadErr) {
+                if (uploadErr.code === 'ECONNABORTED') {
+                    console.error('WordPress took too long to respond (> 2 mins). Skipping image for now.');
+                    break;
+                }
                 if (uploadErr.response?.status === 503 && j < maxUploadRetries - 1) {
-                    console.warn(`WordPress host busy (503). Retrying upload in 3s...`);
-                    await sleep(3000);
+                    console.warn(`WordPress host busy (503). Retrying upload in 5s...`);
+                    await sleep(5000);
                     continue;
                 }
-                throw uploadErr; // Fail if not a 503 or no retries left
+                throw uploadErr;
             }
         }
 

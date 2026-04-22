@@ -95,7 +95,7 @@ No preamble, no explanation, no code fences, no frontmatter.
 You MUST follow this exact output format:
 Line 1: EXCERPT: [your refined 15-25 word excerpt]
 Line 2: blank
-Line 3 onwards: the Markdown body, starting with "# Title"
+Line 3 onwards: the Markdown body, starting directly with your first subheading or paragraph. Do NOT include the project title as an H1 header.
 
 Example input:
 - Type: Tech
@@ -105,8 +105,6 @@ Example input:
 
 Example output:
 EXCERPT: A real-time ride-sharing platform connecting 50k+ urban commuters with drivers through intelligent geolocation matching.
-
-# QuickRide
 
 ### Smarter Commutes, One Tap Away
 QuickRide reimagines urban transportation by connecting commuters with nearby drivers in real time. Built on React Native for seamless cross-platform performance, the app delivers sub-second ride matching powered by a custom geolocation engine.

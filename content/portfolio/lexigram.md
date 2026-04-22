@@ -10,7 +10,6 @@ source: "https://www.figma.com/design/hbzaHVh4AKOqmPd0brYJvI/Lexigram-V2?node-id
 live: "https://www.lexigram.ai"
 ---
 
-# Lexigram
 
 ### Mastering French, One Puzzle at a Time
 Language learning often stalls due to lack of engagement. We developed Lexigram to solve this by transforming vocabulary building into a fluid, gamified experience. By blending interactive puzzles, flashcards, and dynamic quizzes, the app keeps users continuously challenged and mentally stimulated as they progress through different proficiency levels.

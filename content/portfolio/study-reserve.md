@@ -10,7 +10,6 @@ source: "https://github.com/team-zeroone"
 live: "https://www.studyreserve.com/"
 ---
 
-# Study Reserve
 
 ### Scaling Digital Education
 Study Reserve is a robust cloud-based education platform designed to unify the tutoring experience. Over a five-year partnership with Zero One Technologies, the platform evolved from a foundational concept into a sophisticated, continuous ecosystem that serves the entire academic lifecycle. It bridges the gap between institutes and students through a seamless blend of content management, live tutoring capabilities, and performance tracking.

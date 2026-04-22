@@ -1,13 +1,14 @@
 <?php
 /**
  * Plugin Name: ZeroOne Portfolio Custom Post Type
- * Description: Registers the Portfolio CPT and exposes custom meta to the REST API.
- * Version: 1.0
+ * Description: Registers the Portfolio CPT, custom meta, and provides the Zen-Minimal Design System via shortcodes.
+ * Version: 2.0
  * Author: ZeroOne Agent
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// 1. Register CPT
 function zot_register_portfolio_cpt() {
     $labels = array(
         'name'               => 'Portfolio',
@@ -26,7 +27,7 @@ function zot_register_portfolio_cpt() {
         'labels'             => $labels,
         'public'             => true,
         'has_archive'        => true,
-        'show_in_rest'       => true, // CRITICAL: Enables Block Editor & REST API
+        'show_in_rest'       => true,
         'menu_icon'          => 'dashicons-portfolio',
         'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
         'rewrite'            => array( 'slug' => 'projects' ),
@@ -34,7 +35,6 @@ function zot_register_portfolio_cpt() {
 
     register_post_type( 'portfolio', $args );
 
-    // Register Meta Fields for the REST API
     $meta_fields = array('stack', 'source', 'live');
     foreach ($meta_fields as $field) {
         register_post_meta('portfolio', $field, array(
@@ -45,3 +45,215 @@ function zot_register_portfolio_cpt() {
     }
 }
 add_action( 'init', 'zot_register_portfolio_cpt' );
+
+// 2. Inject Zen-Minimal Design System (CSS)
+function zot_portfolio_styles() {
+    ?>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap');
+
+        :root {
+            --zot-bg: #222831;
+            --zot-card-bg: #1a1f26;
+            --zot-text: #ffffff;
+            --zot-muted: #aab4c0;
+            --zot-border: rgba(255,255,255,0.06);
+            --zot-accent: #ffffff;
+        }
+
+        .zot-grid-container {
+            font-family: 'Inter', sans-serif;
+            color: var(--zot-text);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        /* Grid */
+        .zot-project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 60px 40px;
+        }
+
+        .zot-card {
+            text-decoration: none !important;
+            color: inherit !important;
+            display: block;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .zot-card-img {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #111;
+            border: 1px solid var(--zot-border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            transition: inherit;
+        }
+
+        .zot-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(10%);
+            transition: inherit;
+        }
+
+        .zot-card:hover .zot-card-img {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .zot-card:hover .zot-card-img img {
+            transform: scale(1.04);
+            filter: grayscale(0%);
+        }
+
+        .zot-card-cat {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--zot-muted);
+            margin-bottom: 12px;
+            display: block;
+            opacity: 0.6;
+        }
+
+        .zot-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin: 0 0 16px 0;
+        }
+
+        .zot-card-excerpt {
+            color: var(--zot-muted);
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .zot-card-line {
+            margin-top: 32px;
+            height: 1px;
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zot-card-line::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff;
+            transform: translateX(-101%);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .zot-card:hover .zot-card-line::after { transform: translateX(0); }
+
+        /* Meta Bar (Single Page) */
+        .zot-meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            padding: 30px 0;
+            border-top: 1px solid var(--zot-border);
+            border-bottom: 1px solid var(--zot-border);
+            margin: 40px 0 60px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .zot-meta-item { display: flex; flex-direction: column; gap: 4px; }
+        .zot-meta-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--zot-muted);
+            opacity: 0.6;
+        }
+        .zot-meta-val { font-size: 0.9rem; color: #fff; }
+        .zot-meta-val a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+        @media (max-width: 768px) {
+            .zot-project-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <?php
+}
+add_action('wp_head', 'zot_portfolio_styles');
+
+// 3. Shortcode: [zot_portfolio_grid]
+function zot_portfolio_grid_shortcode() {
+    $query = new WP_Query(array(
+        'post_type' => 'portfolio',
+        'posts_per_page' => -1,
+        'status' => 'publish'
+    ));
+
+    if (!$query->have_posts()) return '<p>No projects found.</p>';
+
+    $output = '<div class="zot-grid-container"><div class="zot-project-grid">';
+    
+    while ($query->have_posts()) {
+        $query->the_post();
+        $thumb = get_the_post_thumbnail_url(get_the_ID(), 'large') ?: 'https://ui.shadcn.com/placeholder.svg';
+        $stack = get_post_meta(get_the_ID(), 'stack', true);
+        
+        $output .= sprintf(
+            '<a href="%s" class="zot-card">
+                <div class="zot-card-img"><img src="%s" alt="%s"></div>
+                <span class="zot-card-cat">%s</span>
+                <h3 class="zot-card-title">%s</h3>
+                <p class="zot-card-excerpt">%s</p>
+                <div class="zot-card-line"></div>
+            </a>',
+            get_permalink(),
+            $thumb,
+            get_the_title(),
+            $stack ? explode(',', $stack)[0] : 'Project',
+            get_the_title(),
+            get_the_excerpt()
+        );
+    }
+    
+    $output .= '</div></div>';
+    wp_reset_postdata();
+    return $output;
+}
+add_shortcode('zot_portfolio_grid', 'zot_portfolio_grid_shortcode');
+
+// 4. Shortcode: [zot_portfolio_meta]
+function zot_portfolio_meta_shortcode() {
+    global $post;
+    if ($post->post_type !== 'portfolio') return '';
+
+    $stack = get_post_meta($post->ID, 'stack', true);
+    $live = get_post_meta($post->ID, 'live', true);
+    $source = get_post_meta($post->ID, 'source', true);
+
+    $output = '<div class="zot-meta-bar">';
+    
+    if ($stack) {
+        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Technologies</span><span class="zot-meta-val">'.esc_html($stack).'</span></div>';
+    }
+    
+    if ($live) {
+        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Live Project</span><span class="zot-meta-val"><a href="'.esc_url($live).'" target="_blank">Visit Website</a></span></div>';
+    }
+
+    if ($source) {
+        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Source</span><span class="zot-meta-val"><a href="'.esc_url($source).'" target="_blank">View Code</a></span></div>';
+    }
+
+    $output .= '</div>';
+    return $output;
+}
+add_shortcode('zot_portfolio_meta', 'zot_portfolio_meta_shortcode');

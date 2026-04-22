@@ -71,6 +71,8 @@ jobs:
             
             I have processed your submission and created a Pull Request with the structured Markdown content.
             
+            - **Model Used:** `${{ steps.agent.outputs.model_used }}`
+            
             Please review the changes here: [Check Pull Requests](${{ github.server_url }}/${{ github.repository }}/pulls)
 
       - name: Notify Failure

@@ -54,9 +54,9 @@ async function run() {
 
     console.log('Parsed data:', JSON.stringify(data, null, 2));
 
-    // Initialize Gemini
+    // Initialize Gemini Stack
     const genAI = new GoogleGenerativeAI(geminiApiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const MODELS_TO_TRY = ['gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
 
     const prompt = `
 You are an expert content writer for a creative agency called "ZeroOne". 
@@ -99,19 +99,39 @@ live: "${data.live_url || ''}"
 `;
 
     let markdown = '';
-    const maxRetries = 3;
-    for (let i = 0; i < maxRetries; i++) {
+    let successfulModel = '';
+
+    for (const modelId of MODELS_TO_TRY) {
         try {
-            console.log(`Sending request to Gemini (Attempt ${i + 1})...`);
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            markdown = response.text();
-            break;
-        } catch (err) {
-            if (i === maxRetries - 1) throw err;
-            const waitTime = Math.pow(2, i + 1) * 1000;
-            console.warn(`Gemini API error: ${err.message}. Retrying in ${waitTime/1000}s...`);
-            await sleep(waitTime);
+            console.log(`\n--- Attempting generation with ${modelId} ---`);
+            const model = genAI.getGenerativeModel({ model: modelId });
+            
+            const maxRetries = 3;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    console.log(`Model Attempt ${i + 1} of ${maxRetries}...`);
+                    const result = await model.generateContent(prompt);
+                    const response = await result.response;
+                    markdown = response.text();
+                    successfulModel = modelId;
+                    break;
+                } catch (err) {
+                    if (i === maxRetries - 1) throw err;
+                    const waitTime = Math.pow(2, i + 1) * 1000;
+                    console.warn(`Gemini error (${modelId}): ${err.message}. Retrying in ${waitTime/1000}s...`);
+                    await sleep(waitTime);
+                }
+            }
+            if (markdown) {
+                console.log(`Successfully generated content using ${modelId}`);
+                break;
+            }
+        } catch (modelErr) {
+            console.warn(`Model ${modelId} failed completely.`);
+            if (modelId === MODELS_TO_TRY[MODELS_TO_TRY.length - 1]) {
+                throw new Error(`All Gemini models in stack failed: ${modelErr.message}`);
+            }
+            console.log('Switching to fallback model...');
         }
     }
 
@@ -151,6 +171,7 @@ live: "${data.live_url || ''}"
     core.setOutput('action_label', actionLabel);
     core.setOutput('action_slug', actionSlug);
     core.setOutput('issue_number', issue.number.toString());
+    core.setOutput('model_used', successfulModel);
 
   } catch (error) {
     core.setFailed(error.message);

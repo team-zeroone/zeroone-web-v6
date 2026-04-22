@@ -105,6 +105,10 @@ function zot_portfolio_styles() {
             color: #ffffff;
         }
 
+        /* Hide redundant title if it's the first thing in the body */
+        .entry-content > h1:first-of-type { display: none; }
+        .entry-content > #zot-ai-title { display: none; }
+
         .zot-hero {
             width: 100%;
             height: clamp(300px, 60vh, 800px);

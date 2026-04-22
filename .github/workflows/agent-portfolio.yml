@@ -3,6 +3,12 @@ name: Agent Portfolio Sync
 on:
   issues:
     types: [opened, edited]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'The issue number to process'
+        required: true
+
 
 jobs:
   generate-portfolio:

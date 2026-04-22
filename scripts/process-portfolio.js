@@ -54,37 +54,18 @@ async function run() {
 
     console.log('Parsed data:', JSON.stringify(data, null, 2));
 
-    // Initialize Gemini Stack
+    // ========================================
+    // AI GENERATION (Optimized Pipeline)
+    // ========================================
+
     const genAI = new GoogleGenerativeAI(geminiApiKey);
     const MODELS_TO_TRY = ['gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
+    const slug = slugify(data.title, { lower: true });
 
-    const prompt = `
-You are an expert content writer for a creative agency called "ZeroOne". 
-Your task is to take raw project notes and turn them into a professional, engaging portfolio piece.
-
-Target language: English.
-Tone: Professional, Innovative, Sleek.
-Word count for description: ~150-250 words.
-CRITICAL: Do NOT use the em-dash character (—) in your output. Use standard dashes (-), colons, or commas instead.
-
-Raw Data:
-- Title: ${data.title}
-- Type: ${data.type}
-- Thumbnail: ${data.thumbnail}
-- Excerpt: ${data.excerpt}
-- Tech Stack: ${data.stack}
-- Source/Figma/GitHub: ${data.source_url}
-- Live Link: ${data.live_url}
-- Brain Dump / Details: ${data.details}
-
-Output Format:
-You must return ONLY a Markdown file content. 
-The Markdown must have YAML frontmatter.
-
-Desired Frontmatter Structure:
----
+    // Optimization #4: Pre-fill frontmatter in code. Model never touches structured data.
+    const frontmatter = `---
 title: "${data.title}"
-slug: "${slugify(data.title, { lower: true })}"
+slug: "${slug}"
 type: "${data.type}"
 date: "${new Date().toISOString()}"
 excerpt: "${data.excerpt}"
@@ -92,28 +73,89 @@ image: "${data.thumbnail || ''}"
 stack: "${data.stack}"
 source: "${data.source_url || ''}"
 live: "${data.live_url || ''}"
----
+---`;
 
-# ${data.title}
+    // Optimization #5: Enrich sparse details with context from other fields
+    let enrichedDetails = data.details || '';
+    if (!enrichedDetails || enrichedDetails.length < 50) {
+        enrichedDetails = `${data.excerpt || ''}. Built with ${data.stack || 'modern technologies'}. ${enrichedDetails}`;
+    }
 
-[Provide a structured, beautifully written description here based on the brain dump. Use headings if necessary.]
-`;
+    // Optimization #1: System prompt separated from user content
+    // Optimization #2: Few-shot example included
+    // Optimization #3: Strict output format
+    const systemPrompt = `You are a content writer for ZeroOne, a creative technology agency.
+Write professional, engaging portfolio project descriptions.
+Tone: innovative, confident, sleek. Not salesy or generic.
+Length: 150-250 words for the body content.
+Never use the em-dash character. Use standard dashes (-), colons, or commas instead.
+Return ONLY the raw Markdown body. No preamble, no explanation, no code fences, no frontmatter.
+Start directly with "# Title" on the first line.
+Use ### subheadings to break the content into logical sections.
 
-    let markdown = '';
+Example input:
+- Type: Tech
+- Excerpt: A ride-sharing app for urban commuters.
+- Stack: React Native, Node.js, PostgreSQL
+- Details: Built a real-time ride matching system. 50k+ users. Integrated Stripe payments and live GPS tracking.
+
+Example output:
+# QuickRide
+
+### Smarter Commutes, One Tap Away
+QuickRide reimagines urban transportation by connecting commuters with nearby drivers in real time. Built on React Native for seamless cross-platform performance, the app delivers sub-second ride matching powered by a custom geolocation engine.
+
+### Built for Scale
+With over 50,000 active users, the platform handles thousands of concurrent ride requests through a Node.js backend backed by PostgreSQL. We integrated Stripe for frictionless in-app payments and built a live GPS tracking system that keeps both riders and drivers informed at every step.
+
+### The Result
+A polished, production-grade mobility platform that proves great UX and robust engineering can coexist. QuickRide is fast, reliable, and ready for growth.`;
+
+    // Optimization #1 continued: User prompt is pure data, no instructions
+    const userPrompt = `Write a portfolio description for this project:
+- Title: ${data.title}
+- Type: ${data.type}
+- Excerpt: ${data.excerpt}
+- Stack: ${data.stack}
+- Details: ${enrichedDetails}`;
+
+    // Optimization #6: Output validation
+    function isValidBody(text) {
+        const trimmed = text.trim();
+        return trimmed.startsWith('#') && trimmed.length > 200;
+    }
+
+    let generatedBody = '';
     let successfulModel = '';
 
     for (const modelId of MODELS_TO_TRY) {
         try {
             console.log(`\n--- Attempting generation with ${modelId} ---`);
-            const model = genAI.getGenerativeModel({ model: modelId });
-            
+            const model = genAI.getGenerativeModel({
+                model: modelId,
+                systemInstruction: systemPrompt,
+            });
+
             const maxRetries = 3;
             for (let i = 0; i < maxRetries; i++) {
                 try {
-                    console.log(`Model Attempt ${i + 1} of ${maxRetries}...`);
-                    const result = await model.generateContent(prompt);
+                    console.log(`Attempt ${i + 1} of ${maxRetries}...`);
+                    const result = await model.generateContent(userPrompt);
                     const response = await result.response;
-                    markdown = response.text();
+                    let text = response.text();
+
+                    // Post-processing: strip code fences and em-dashes
+                    text = text.replace(/^```(?:markdown)?\n?/, '').replace(/\n?```$/, '');
+                    text = text.split('\u2014').join('-');
+
+                    // Optimization #6: Validate before accepting
+                    if (!isValidBody(text)) {
+                        console.warn(`Validation failed (length: ${text.trim().length}, starts with #: ${text.trim().startsWith('#')}). Retrying...`);
+                        if (i < maxRetries - 1) continue;
+                        throw new Error('Model returned invalid output after all retries');
+                    }
+
+                    generatedBody = text;
                     successfulModel = modelId;
                     break;
                 } catch (err) {
@@ -123,7 +165,7 @@ live: "${data.live_url || ''}"
                     await sleep(waitTime);
                 }
             }
-            if (markdown) {
+            if (generatedBody) {
                 console.log(`Successfully generated content using ${modelId}`);
                 break;
             }
@@ -136,11 +178,9 @@ live: "${data.live_url || ''}"
         }
     }
 
-    // Clean up markdown if Gemini wrapped it in code blocks or used em-dashes
-    markdown = markdown.replace(/^```markdown\n/, '').replace(/\n```$/, '');
-    markdown = markdown.split('—').join('-');
+    // Optimization #4: Assemble final file from pre-filled frontmatter + generated body
+    const markdown = frontmatter + '\n\n' + generatedBody.trim() + '\n';
 
-    const slug = slugify(data.title, { lower: true });
     const filePath = `content/portfolio/${slug}.md`;
     
     // Check if it's a new project or an update
@@ -159,12 +199,6 @@ live: "${data.live_url || ''}"
 
     // Git operations for PR
     const branchName = `portfolio/${slug}-${Date.now()}`;
-    
-    // Check out new branch
-    // Note: In GitHub Actions, we often use git commands or octokit
-    // For simplicity in this script, let's assume the workflow handling the PR creation
-    // But the task says "Implement Pull Request Logic: Create a new branch, add the Markdown file..., commit it, and open a Pull Request."
-    // So I will attempt to do it via Octokit if I can, or output the branch name for the next step.
     
     core.setOutput('branch_name', branchName);
     core.setOutput('file_path', filePath);

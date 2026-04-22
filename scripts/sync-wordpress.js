@@ -154,7 +154,13 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders, targetApiUrl) {
         return uploadResponse.data.id;
 
     } catch (err) {
-        console.warn('Failed to sync image:', err.message);
+        console.warn(`Failed to sync image. Server returned: ${err.message}`);
+        if (err.config && err.config.url) {
+            console.warn(`Error occurred while communicating with: ${err.config.url}`);
+        }
+        if (err.response && err.response.data) {
+            console.warn(`Server Error Details:`, err.response.data);
+        }
         return null;
     }
 }

@@ -5,6 +5,7 @@ const axios = require('axios');
 const matter = require('gray-matter');
 const { marked } = require('marked');
 const FormData = require('form-data');
+const sharp = require('sharp');
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -183,9 +184,17 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
             return 999; // Dummy ID
         }
 
+        // 1.5 Optimize image before upload to prevent WordPress 503 errors
+        console.log('Optimizing image for WordPress...');
+        const optimizedBuffer = await sharp(imageResponse.data)
+            .resize({ width: 1200, withoutEnlargement: true })
+            .toBuffer();
+        
+        console.log(`Optimization complete (${Math.round(imageResponse.data.length/1024)}KB -> ${Math.round(optimizedBuffer.length/1024)}KB)`);
+
         // 2. Upload to WP (With Retry for 503s)
         const formData = new FormData();
-        formData.append('file', Buffer.from(imageResponse.data), {
+        formData.append('file', optimizedBuffer, {
             filename: fileName,
             contentType: imageResponse.headers['content-type']
         });

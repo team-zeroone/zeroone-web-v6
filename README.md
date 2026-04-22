@@ -31,15 +31,15 @@ At the very top of the file, surrounded by `---`, is the metadata. This is struc
 **Example:**
 ```yaml
 ---
-title: "Lexigram"  # Automatically grabbed from your issue title.
-slug: "lexigram"   # Converted into a URL-friendly lowercase string.
+title: "Project Alpha"  # Automatically grabbed from your issue title.
+slug: "project-alpha"   # Converted into a URL-friendly lowercase string.
 type: "Design"     # Grabbed exactly from the dropdown menu.
-date: "2026-04-20T18:59:11.621Z" # Dynamically injected timestamp of creation!
-excerpt: "Master French Vocabulary with AI" # Piped straight from the short-excerpt.
-image: "https://images.pexels.com/..." # Read the thumbnail URL directly.
-stack: "Figma, Flutter, FastAPI, Kafka" # Parsed the stack list.
-source: "_No response_" # Blank if not provided. Link to Figma or GitHub.
-live: "https://www.lexigram.ai/" # Read the live URL properly.
+date: "2026-04-20T18:59:11.621Z" # Injected by the AI Agent based on submission time.
+excerpt: "Mastering Design with AI" # Piped straight from the short-excerpt box.
+image: "https://images.pexels.com/..." # Downloaded and synced to WP Media.
+stack: "Figma, Node.js" # Parsed the stack list.
+github: "https://github.com/..." # Recognized source URL.
+live: "https://example.com/project-alpha" # Read the live URL properly.
 ---
 ```
 

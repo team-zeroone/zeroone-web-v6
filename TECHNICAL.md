@@ -36,11 +36,13 @@ If you need to work on the script or test it locally:
     npm install
     ```
 
-3.  **Run the script:**
-    You will need to pass an issue body structure if you are testing manually, or mock the GitHub context.
+4.  **Run the script:**
+    Setting up a `.env` file makes local testing easier:
+    - Copy `.env.example` to `.env`
+    - Fill in your local/staging credentials.
+    - Run the script (e.g., for a dry run):
     ```bash
-    # Set GEMINI_API_KEY environment variable
-    node scripts/process-portfolio.js
+    node scripts/sync-wordpress.js content/portfolio/lexigram.md --dry-run
     ```
 
 ---
@@ -64,3 +66,63 @@ This ensures images are stored securely during submission but are fully visible 
 - **Issue Template:** `.github/ISSUE_TEMPLATE/portfolio-submission.yml` (The GUI Form)
 - **Workflow:** `.github/workflows/agent-portfolio.yml` (The Pipeline)
 - **Processor:** `scripts/process-portfolio.js` (The AI Agent)
+- **Sync Tool:** `scripts/sync-wordpress.js` (The WordPress Connection)
+
+---
+
+## 📄 Markdown File Structure
+
+If you are manually creating or editing files in `content/portfolio/`, they MUST follow this YAML frontmatter structure for the sync to work:
+
+| Field | Purpose | Required |
+| :--- | :--- | :--- |
+| `title` | The project name shown in WordPress. | Yes |
+| `slug` | The URL identifier (must be unique). | Yes |
+| `type` | "Tech" or "Design". | Yes |
+| `date` | ISO timestamp of the project. | Yes |
+| `excerpt` | A short one-liner for grid cards. | Yes |
+| `image` | Direct URL or GitHub attachment URL. | Yes |
+| `stack` | Technologies used (comma separated). | No |
+| `source` | Link to GitHub/Figma. | No |
+| `live` | Link to the live website. | No |
+
+**Example:**
+```yaml
+---
+title: "Project Alpha"
+slug: "project-alpha"
+type: "Tech"
+date: "2026-04-22T00:00:00Z"
+excerpt: "A cool app built with React."
+image: "https://example.com/thumb.png"
+stack: "React, Firebase"
+source: "https://github.com/user/repo"
+live: "https://my-app.com"
+---
+```
+---
+
+## 👨‍💻 Developer Handover (Frontend)
+
+If you are the developer building the frontend display for these projects, here is how you access the data:
+
+### 1. Data Source
+Projects are stored in the Custom Post Type: **`portfolio`**.
+
+### 2. Custom Meta Fields
+The automation script pushes data into the following standard WordPress Post Meta keys:
+- `stack`: A comma-separated string of technologies (e.g., "React, Node.js").
+- `source`: The URL to the GitHub or Figma source file.
+- `live`: The URL to the live production website.
+
+### 3. Images (Featured Image)
+The script automatically downloads images from GitHub/External URLs and uploads them to the **WordPress Media Library**. It then sets them as the native **"Featured Image"** (`_thumbnail_id`) for each project. You can use `get_the_post_thumbnail_url()` or standard Elementor widgets to display them.
+
+### 4. Querying via REST API
+If you are building aheadless front end, you can fetch all projects at:
+`GET /wp-json/wp/v2/portfolio?_embed`
+
+### 5. Local Testing
+To test the sync locally without affecting production:
+1. Set the `WP_API_URL` to your local environment.
+2. Run `node scripts/sync-wordpress.js --dry-run` to see the JSON payloads being sent without mutating the database.

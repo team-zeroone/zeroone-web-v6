@@ -1,0 +1,42 @@
+name: WordPress Sync
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'content/portfolio/**'
+
+jobs:
+  sync-to-wp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: content/portfolio/*.md
+
+      - name: Setup Node.js
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npm install
+
+      - name: Sync to WordPress
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          WP_API_URL: ${{ secrets.WP_API_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node scripts/sync-wordpress.js ${{ steps.changed-files.outputs.all_changed_files }}

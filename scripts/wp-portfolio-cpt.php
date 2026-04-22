@@ -271,6 +271,8 @@ function zot_portfolio_grid_shortcode() {
         $query->the_post();
         $thumb = get_the_post_thumbnail_url(get_the_ID(), 'large') ?: 'https://ui.shadcn.com/placeholder.svg';
         $stack = get_post_meta(get_the_ID(), 'stack', true);
+        $excerpt = wp_strip_all_tags(get_the_excerpt());
+        $excerpt = wp_trim_words($excerpt, 25, '...');
         
         $output .= sprintf(
             '<a href="%s" class="zot-card">
@@ -285,7 +287,7 @@ function zot_portfolio_grid_shortcode() {
             get_the_title(),
             $stack ? explode(',', $stack)[0] : 'Project',
             get_the_title(),
-            wp_strip_all_tags(get_the_excerpt())
+            $excerpt
         );
     }
     

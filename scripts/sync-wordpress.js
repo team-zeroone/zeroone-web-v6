@@ -12,6 +12,10 @@ const WP_USERNAME = process.env.WP_USERNAME;
 const WP_APP_PASSWORD = process.env.WP_APP_PASSWORD;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
+// Local WP Live Link Basic Auth (Optional)
+const WP_LIVE_USER = process.env.WP_LIVE_USER;
+const WP_LIVE_PASS = process.env.WP_LIVE_PASS;
+
 // Mode Flags
 const isDryRun = process.argv.includes('--dry-run');
 
@@ -23,7 +27,18 @@ async function syncToWordPress() {
         throw new Error('WordPress credentials (WP_API_URL, WP_USERNAME, WP_APP_PASSWORD) are missing.');
     }
 
-    // Auth header for WordPress
+    // 1. Handle Local WP Live Link "Double Lock"
+    let targetApiUrl = WP_API_URL;
+    if (WP_LIVE_USER && WP_LIVE_PASS) {
+        console.log('Injecting Live Link credentials into URL...');
+        // Standard URL injection: https://user:pass@domain.com/wp-json
+        const urlObj = new URL(WP_API_URL);
+        urlObj.username = WP_LIVE_USER;
+        urlObj.password = WP_LIVE_PASS;
+        targetApiUrl = urlObj.toString();
+    }
+
+    // 2. Auth header for REST API (The WordPress User)
     const wpAuth = Buffer.from(`${WP_USERNAME}:${WP_APP_PASSWORD}`).toString('base64');
     const wpHeaders = {
         'Authorization': `Basic ${wpAuth}`
@@ -83,17 +98,17 @@ async function syncToWordPress() {
             }
 
             // 4. Check if post exists
-            const searchUrl = `${WP_API_URL}/wp/v2/portfolio?slug=${slug}&status=any`;
+            const searchUrl = `${targetApiUrl}/wp/v2/portfolio?slug=${slug}&status=any`;
             const searchResponse = await axios.get(searchUrl, { headers: wpHeaders });
             const existingPost = searchResponse.data[0];
 
             if (existingPost) {
                 console.log(`Updating existing post (ID: ${existingPost.id})...`);
-                await axios.post(`${WP_API_URL}/wp/v2/portfolio/${existingPost.id}`, payload, { headers: wpHeaders });
+                await axios.post(`${targetApiUrl}/wp/v2/portfolio/${existingPost.id}`, payload, { headers: wpHeaders });
                 console.log('Successfully updated!');
             } else {
                 console.log('Creating new post...');
-                await axios.post(`${WP_API_URL}/wp/v2/portfolio`, payload, { headers: wpHeaders });
+                await axios.post(`${targetApiUrl}/wp/v2/portfolio`, payload, { headers: wpHeaders });
                 console.log('Successfully created!');
             }
 
@@ -135,7 +150,7 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
             contentType: imageResponse.headers['content-type']
         });
 
-        const uploadResponse = await axios.post(`${WP_API_URL}/wp/v2/media`, formData, {
+        const uploadResponse = await axios.post(`${targetApiUrl}/wp/v2/media`, formData, {
             headers: {
                 ...wpHeaders,
                 ...formData.getHeaders()

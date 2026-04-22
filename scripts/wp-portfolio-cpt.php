@@ -187,12 +187,13 @@ function zot_portfolio_styles() {
             font-size: 1rem;
             font-weight: 300;
             line-height: 1.6;
-            /* Truncate after 3 lines */
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            /* Truncate after 3 lines - Forceful */
+            display: -webkit-box !important;
+            -webkit-line-clamp: 3 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
             text-overflow: ellipsis;
+            max-height: 4.8em; /* 3 lines * 1.6 line-height */
         }
 
         .zot-card-line {
@@ -284,7 +285,7 @@ function zot_portfolio_grid_shortcode() {
             get_the_title(),
             $stack ? explode(',', $stack)[0] : 'Project',
             get_the_title(),
-            get_the_excerpt()
+            wp_strip_all_tags(get_the_excerpt())
         );
     }
     

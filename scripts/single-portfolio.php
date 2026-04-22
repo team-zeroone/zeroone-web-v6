@@ -33,7 +33,12 @@ get_header(); ?>
             <?php echo do_shortcode('[zot_portfolio_meta]'); ?>
 
             <div class="entry-content" style="font-family: 'Inter', sans-serif; line-height: 1.8; color: #aab4c0; font-size: 1.15rem; font-weight: 300;">
-                <?php the_content(); ?>
+                <?php 
+                    $content = get_the_content();
+                    $content = apply_filters('the_content', $content);
+                    // Remove the first H1 if it appears at the start of the content (stripping the redundant AI title)
+                    echo preg_replace('/<h1[^>]*>.*?<\/h1>/i', '', $content, 1); 
+                ?>
             </div>
 
             <footer class="entry-footer" style="margin: 120px 0 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center;">

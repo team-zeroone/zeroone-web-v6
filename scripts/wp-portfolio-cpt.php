@@ -187,6 +187,12 @@ function zot_portfolio_styles() {
             font-size: 1rem;
             font-weight: 300;
             line-height: 1.6;
+            /* Truncate after 3 lines */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .zot-card-line {

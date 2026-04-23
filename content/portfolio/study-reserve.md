@@ -7,7 +7,7 @@ excerpt: "A comprehensive, cross-platform educational ecosystem providing secure
 image: "https://github.com/user-attachments/assets/e14ee80e-9392-4f79-9cb4-b58737cab5aa"
 hero_image: "https://github.com/user-attachments/assets/f8809bfd-1b82-48d0-8d36-ced35cc12914"
 stack: "Flutter, React, Electron, Spring Boot, MySQL, DigitalOcean, Firebase"
-source: "https://github.com/team-zeroone"
+source: ""
 live: "https://www.studyreserve.com/"
 ---
 

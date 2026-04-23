@@ -8,7 +8,7 @@ image: "https://github.com/user-attachments/assets/49aa4db7-bf53-480f-838b-afcc3
 hero_image: "https://github.com/user-attachments/assets/3b67b970-51d3-41be-aa0f-d8a9e0f28d8d"
 stack: "Figma, Flutter"
 source: ""
-live: ""
+live: "https://beyourmotivation.com/"
 ---
 
 ### Architecture for Consistency

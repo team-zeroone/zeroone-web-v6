@@ -35,10 +35,11 @@ title: "Project Alpha"  # Automatically grabbed from your issue title.
 slug: "project-alpha"   # Converted into a URL-friendly lowercase string.
 type: "Design"     # Grabbed exactly from the dropdown menu.
 date: "2026-04-20T18:59:11.621Z" # Injected by the AI Agent based on submission time.
-excerpt: "Mastering Design with AI" # Piped straight from the short-excerpt box.
+excerpt: "A sophisticated design system built for scale." # Extracted and refined automatically by AI from your Brain Dump.
 image: "https://images.pexels.com/..." # Downloaded and synced to WP Media.
+hero_image: "https://images.pexels.com/..." # Optional secondary image for the project header.
 stack: "Figma, Node.js" # Parsed the stack list.
-github: "https://github.com/..." # Recognized source URL.
+source: "https://github.com/..." # Recognized source URL.
 live: "https://example.com/project-alpha" # Read the live URL properly.
 ---
 ```
@@ -51,8 +52,9 @@ Below the frontmatter is the beautifully written article. The **Gemini AI** mode
 ## 🔄 How to Update or Delete
 
 ### To Update
-- **Option A (AI Help):** Go to the original **Issue** for the project, click **Edit**, modify your notes, and save. The agent will open a new PR with revised wording.
-- **Option B (Manual):** Go into the `content/portfolio/` folder, open the specific `.md` file, and edit it directly using the GitHub pencil icon.
+- **Option A (Safe Metadata Update):** Go to the original **Issue** for the project, click **Edit**, modify your metadata (like URLs or Stack), and save. The agent will open a new PR. **Your existing Markdown description will be preserved safely.**
+- **Option B (Force AI Re-generation):** If you added a lot of new notes and want the AI to completely rewrite the project description, add **`[REGEN]`** anywhere in the Issue title before saving.
+- **Option C (Manual):** Go into the `content/portfolio/` folder, open the specific `.md` file, and edit it directly using the GitHub pencil icon.
 
 ### To Delete
 - Go to the `content/portfolio/` folder.
@@ -70,7 +72,7 @@ Below the frontmatter is the beautifully written article. The **Gemini AI** mode
   The AI Agent is designed to be forgiving. If you skip the thumbnail, the Agent will automatically inject a sleek default placeholder image (`ui.shadcn.com/placeholder.svg`) so your web grid never breaks.
 
 - **Can I edit the Markdown files manually?**
-  Yes! If the AI Agent makes a tiny typo, you can navigate straight to `content/portfolio/` and use the GitHub pencil icon to fix the typo yourself. Just remember: if you ever edit the **original GitHub Issue** again in the future, the Agent will overwrite your manual file tweaks.
+  Yes! If the AI Agent makes a tiny typo, you can navigate straight to `content/portfolio/` and use the GitHub pencil icon to fix the typo yourself. Because of our "Safe Update" logic, if you later edit the GitHub Issue to change a URL, the Agent will **not** overwrite your manual tweaks to the text (unless you use the `[REGEN]` tag).
 
 - **Why didn't my Pull Request generate?**
   Ensure that the **`portfolio`** label is attached to your issue. Our template adds it automatically, but if it gets removed, the AI Agent will intentionally skip the workflow to keep your repository clean.

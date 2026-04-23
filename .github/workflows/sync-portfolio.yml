@@ -38,5 +38,6 @@ jobs:
           WP_USERNAME: ${{ secrets.WP_USERNAME }}
           WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DELETED_FILES: ${{ steps.changed-files.outputs.deleted_files }}
         run: |
           node scripts/sync-wordpress.js ${{ steps.changed-files.outputs.all_changed_files }}

@@ -112,6 +112,38 @@ async function syncToWordPress() {
             console.error(`Error processing ${filePath}:`, err.response?.data || err.message);
         }
     }
+
+    // 5. Handle Deleted Files — Trash corresponding WordPress posts
+    const deletedFiles = (process.env.DELETED_FILES || '').trim();
+    if (deletedFiles) {
+        const deletedPaths = deletedFiles.split(' ').filter(f => f.endsWith('.md'));
+        console.log(`\n--- Processing ${deletedPaths.length} deleted file(s) ---`);
+
+        for (const deletedPath of deletedPaths) {
+            try {
+                const deletedSlug = path.basename(deletedPath, '.md');
+                console.log(`\nLooking up WordPress post for deleted file: ${deletedSlug}`);
+
+                const searchUrl = `${WP_API_URL}/wp/v2/portfolio?slug=${deletedSlug}&status=any`;
+                const searchResponse = await axios.get(searchUrl, { headers: wpHeaders });
+                const existingPost = searchResponse.data[0];
+
+                if (existingPost) {
+                    if (isDryRun) {
+                        console.log(`PLAN: Would trash post "${existingPost.title.rendered}" (ID: ${existingPost.id})`);
+                        continue;
+                    }
+                    console.log(`Trashing post "${existingPost.title.rendered}" (ID: ${existingPost.id})...`);
+                    await axios.delete(`${WP_API_URL}/wp/v2/portfolio/${existingPost.id}`, { headers: wpHeaders });
+                    console.log('Successfully trashed!');
+                } else {
+                    console.log(`No WordPress post found for slug "${deletedSlug}". Skipping.`);
+                }
+            } catch (err) {
+                console.error(`Error deleting post for ${deletedPath}:`, err.response?.data || err.message);
+            }
+        }
+    }
 }
 
 /**

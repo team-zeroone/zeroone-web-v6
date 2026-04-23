@@ -175,6 +175,22 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
     try {
         console.log(`Syncing image: ${imageUrl}`);
         
+        // 0. Check if this image already exists in the WP Media Library (prevent duplicates)
+        try {
+            const searchResponse = await axios.get(`${WP_API_URL}/wp/v2/media?search=${slug}&per_page=5`, {
+                headers: wpHeaders
+            });
+            const existing = searchResponse.data.find(m => 
+                m.slug && m.slug.startsWith(slug)
+            );
+            if (existing) {
+                console.log(`Image already exists in Media Library (ID: ${existing.id}, slug: ${existing.slug}). Skipping upload.`);
+                return existing.id;
+            }
+        } catch (searchErr) {
+            console.warn(`Could not search media library (${searchErr.message}). Will proceed with upload.`);
+        }
+
         // 1. Download image
         const imageResponse = await downloadImageWithRetry(imageUrl, slug);
         

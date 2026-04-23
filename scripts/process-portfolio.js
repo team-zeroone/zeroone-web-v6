@@ -249,7 +249,8 @@ function parseIssueBody(body) {
   sections.forEach(section => {
     const lines = section.trim().split('\n');
     const header = lines[0].trim().toLowerCase();
-    const content = lines.slice(1).join('\n').trim();
+    let content = lines.slice(1).join('\n').trim();
+    if (content === '_No response_') content = '';
     
     if (header.includes('project title')) data.title = content;
     else if (header.includes('project type')) data.type = content;

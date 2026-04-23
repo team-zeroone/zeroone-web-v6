@@ -3,51 +3,54 @@
  * Plugin Name: ZeroOne Portfolio Custom Post Type
  * Description: Registers the Portfolio CPT, custom meta, and provides the Zen-Minimal Design System via shortcodes.
  * Version: 2.0
- * Author: ZeroOne Agent
+ * Author: Megha Jayalath
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if (!defined('ABSPATH'))
+    exit;
 
 // 1. Register CPT
-function zot_register_portfolio_cpt() {
+function zot_register_portfolio_cpt()
+{
     $labels = array(
-        'name'               => 'Portfolio',
-        'singular_name'      => 'Project',
-        'add_new'            => 'Add New',
-        'add_new_item'       => 'Add New Project',
-        'edit_item'          => 'Edit Project',
-        'new_item'           => 'New Project',
-        'view_item'          => 'View Project',
-        'search_items'       => 'Search Projects',
-        'not_found'          => 'No projects found',
-        'all_items'          => 'All Projects',
+        'name' => 'Portfolio',
+        'singular_name' => 'Project',
+        'add_new' => 'Add New',
+        'add_new_item' => 'Add New Project',
+        'edit_item' => 'Edit Project',
+        'new_item' => 'New Project',
+        'view_item' => 'View Project',
+        'search_items' => 'Search Projects',
+        'not_found' => 'No projects found',
+        'all_items' => 'All Projects',
     );
 
     $args = array(
-        'labels'             => $labels,
-        'public'             => true,
-        'has_archive'        => true,
-        'show_in_rest'       => true,
-        'menu_icon'          => 'dashicons-portfolio',
-        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
-        'rewrite'            => array( 'slug' => 'projects' ),
+        'labels' => $labels,
+        'public' => true,
+        'has_archive' => true,
+        'show_in_rest' => true,
+        'menu_icon' => 'dashicons-portfolio',
+        'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'),
+        'rewrite' => array('slug' => 'projects'),
     );
 
-    register_post_type( 'portfolio', $args );
+    register_post_type('portfolio', $args);
 
     $meta_fields = array('stack', 'source', 'live', 'hero_image_id');
     foreach ($meta_fields as $field) {
         register_post_meta('portfolio', $field, array(
             'show_in_rest' => true,
-            'single'       => true,
-            'type'         => 'string',
+            'single' => true,
+            'type' => 'string',
         ));
     }
 }
-add_action( 'init', 'zot_register_portfolio_cpt' );
+add_action('init', 'zot_register_portfolio_cpt');
 
 // 2. Inject Zen-Minimal Design System (CSS)
-function zot_portfolio_styles() {
+function zot_portfolio_styles()
+{
     ?>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap');
@@ -57,7 +60,7 @@ function zot_portfolio_styles() {
             --zot-card-bg: #1a1f26;
             --zot-text: #ffffff;
             --zot-muted: #aab4c0;
-            --zot-border: rgba(255,255,255,0.06);
+            --zot-border: rgba(255, 255, 255, 0.06);
             --zot-accent: #ffffff;
         }
 
@@ -154,9 +157,9 @@ function zot_portfolio_styles() {
         }
 
         .zot-card:hover .zot-card-img {
-            border-color: rgba(255,255,255,0.15);
+            border-color: rgba(255, 255, 255, 0.15);
             transform: translateY(-8px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
         }
 
         .zot-card:hover .zot-card-img img {
@@ -193,7 +196,7 @@ function zot_portfolio_styles() {
             margin-top: 32px;
             height: 1px;
             width: 100%;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             position: relative;
             overflow: hidden;
         }
@@ -201,13 +204,18 @@ function zot_portfolio_styles() {
         .zot-card-line::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: #fff;
             transform: translateX(-101%);
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .zot-card:hover .zot-card-line::after { transform: translateX(0); }
+        .zot-card:hover .zot-card-line::after {
+            transform: translateX(0);
+        }
 
         /* Meta Bar (Single Page) */
         .zot-meta-bar {
@@ -221,7 +229,12 @@ function zot_portfolio_styles() {
             font-family: 'Inter', sans-serif;
         }
 
-        .zot-meta-item { display: flex; flex-direction: column; gap: 4px; }
+        .zot-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
         .zot-meta-label {
             font-family: 'Outfit', sans-serif;
             font-size: 0.7rem;
@@ -230,18 +243,41 @@ function zot_portfolio_styles() {
             color: var(--zot-muted);
             opacity: 0.6;
         }
-        .zot-meta-val { font-size: 0.9rem; color: #fff; }
-        .zot-meta-val a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+        .zot-meta-val {
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .zot-meta-val a {
+            color: #fff;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
 
         @media (max-width: 1024px) {
-            .zot-project-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+            .zot-project-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
-            .zot-project-grid { grid-template-columns: 1fr; }
-            .zot-header { margin-bottom: 60px; }
-            .zot-grid-container { padding: 40px 0; }
-            .zot-meta-bar { gap: 24px; padding: 20px 0; }
+            .zot-project-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .zot-header {
+                margin-bottom: 60px;
+            }
+
+            .zot-grid-container {
+                padding: 40px 0;
+            }
+
+            .zot-meta-bar {
+                gap: 24px;
+                padding: 20px 0;
+            }
         }
     </style>
     <?php
@@ -249,22 +285,24 @@ function zot_portfolio_styles() {
 add_action('wp_head', 'zot_portfolio_styles');
 
 // 3. Shortcode: [zot_portfolio_grid]
-function zot_portfolio_grid_shortcode() {
+function zot_portfolio_grid_shortcode()
+{
     $query = new WP_Query(array(
         'post_type' => 'portfolio',
         'posts_per_page' => -1,
         'status' => 'publish'
     ));
 
-    if (!$query->have_posts()) return '<p>No projects found.</p>';
+    if (!$query->have_posts())
+        return '<p>No projects found.</p>';
 
     $output = '<div class="zot-grid-container"><div class="zot-project-grid">';
-    
+
     while ($query->have_posts()) {
         $query->the_post();
         $thumb = get_the_post_thumbnail_url(get_the_ID(), 'large') ?: 'https://ui.shadcn.com/placeholder.svg';
         $stack = get_post_meta(get_the_ID(), 'stack', true);
-        
+
         $output .= sprintf(
             '<a href="%s" class="zot-card">
                 <div class="zot-card-img"><img src="%s" alt="%s"></div>
@@ -281,7 +319,7 @@ function zot_portfolio_grid_shortcode() {
             get_the_excerpt()
         );
     }
-    
+
     $output .= '</div></div>';
     wp_reset_postdata();
     return $output;
@@ -289,26 +327,42 @@ function zot_portfolio_grid_shortcode() {
 add_shortcode('zot_portfolio_grid', 'zot_portfolio_grid_shortcode');
 
 // 4. Shortcode: [zot_portfolio_meta]
-function zot_portfolio_meta_shortcode() {
+function zot_portfolio_meta_shortcode()
+{
     global $post;
-    if ($post->post_type !== 'portfolio') return '';
+    if ($post->post_type !== 'portfolio')
+        return '';
 
     $stack = get_post_meta($post->ID, 'stack', true);
     $live = get_post_meta($post->ID, 'live', true);
     $source = get_post_meta($post->ID, 'source', true);
 
+    // Sanitize missing fields that might have old github issue placeholders
+    if ($stack === '_No response_') $stack = '';
+    if ($live === '_No response_') $live = '';
+    if ($source === '_No response_') $source = '';
+
     $output = '<div class="zot-meta-bar">';
-    
+
     if ($stack) {
-        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Technologies</span><span class="zot-meta-val">'.esc_html($stack).'</span></div>';
+        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Technologies</span><span class="zot-meta-val">' . esc_html($stack) . '</span></div>';
     }
-    
+
     if ($live) {
-        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Live Project</span><span class="zot-meta-val"><a href="'.esc_url($live).'" target="_blank">Visit Website</a></span></div>';
+        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Live Project</span><span class="zot-meta-val"><a href="' . esc_url($live) . '" target="_blank">Visit Website</a></span></div>';
     }
 
     if ($source) {
-        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Source</span><span class="zot-meta-val"><a href="'.esc_url($source).'" target="_blank">View Code</a></span></div>';
+        $source_label = 'View Source';
+        if (strpos($source, 'figma.com') !== false) {
+            $source_label = 'View Design';
+        } elseif (strpos($source, 'dribbble.com') !== false || strpos($source, 'behance.net') !== false) {
+            $source_label = 'View Portfolio';
+        } elseif (strpos($source, 'github.com') !== false) {
+            $source_label = 'View Code';
+        }
+        
+        $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Project File</span><span class="zot-meta-val"><a href="' . esc_url($source) . '" target="_blank">' . esc_html($source_label) . '</a></span></div>';
     }
 
     $output .= '</div>';

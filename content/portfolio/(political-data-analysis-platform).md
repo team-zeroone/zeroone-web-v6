@@ -5,10 +5,10 @@ type: "Tech"
 date: "2026-04-22T19:25:58.837Z"
 excerpt: "A sophisticated data intelligence platform that distills complex political and regulatory information into actionable insights through advanced AI-driven predictive modeling."
 image: "https://github.com/user-attachments/assets/47e14321-6530-4e2a-8501-c31eea858294"
-hero_image: "_No response_"
+hero_image: ""
 stack: "React JS"
-source: "_No response_"
-live: "_No response_"
+source: ""
+live: ""
 ---
 
 ### Precision in a Volatile Landscape

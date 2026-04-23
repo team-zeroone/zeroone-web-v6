@@ -7,8 +7,8 @@ excerpt: "A refined fitness and nutrition ecosystem that transforms daily routin
 image: "https://github.com/user-attachments/assets/49aa4db7-bf53-480f-838b-afcc3c4250e3"
 hero_image: "https://github.com/user-attachments/assets/3b67b970-51d3-41be-aa0f-d8a9e0f28d8d"
 stack: "Figma, Flutter"
-source: "_No response_"
-live: "_No response_"
+source: ""
+live: ""
 ---
 
 ### Architecture for Consistency

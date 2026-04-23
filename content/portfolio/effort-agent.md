@@ -7,7 +7,7 @@ excerpt: "A sophisticated AI-driven content ecosystem engineered for critical th
 image: "https://github.com/user-attachments/assets/3ffa2567-e9f1-479c-b200-d24921486b7a"
 hero_image: "https://github.com/user-attachments/assets/94b351a3-3441-4c88-b062-1ccdd5ee2fd1"
 stack: "Django, Python, OpenAI, LangChain, React, Next.js, AWS"
-source: "_No response_"
+source: ""
 live: "https://www.effortagent.com/"
 ---
 

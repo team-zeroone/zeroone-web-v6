@@ -7,7 +7,7 @@ excerpt: "A collaborative learning ecosystem that empowers educators to build in
 image: "https://github.com/user-attachments/assets/0135204a-73e9-4a39-baa2-b05a09f3717b"
 hero_image: "https://github.com/user-attachments/assets/2306e583-d218-4228-8097-6ae1a8f32c30"
 stack: "Flutter, Next.js, React, Postgres, Supabase, Firebase, Nest.js, DigitalOcean,"
-source: "_No response_"
+source: ""
 live: "https://studyq.lk/"
 ---
 

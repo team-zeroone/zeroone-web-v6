@@ -7,8 +7,8 @@ excerpt: "A high-performance cross-platform driver application built with Flutte
 image: "https://github.com/user-attachments/assets/0f59e9cf-be31-4603-82bb-63faf091c2ce"
 hero_image: "https://github.com/user-attachments/assets/ed959b0f-7a20-4034-b165-892ad7e8f9e4"
 stack: "Flutter"
-source: "_No response_"
-live: "_No response_"
+source: ""
+live: ""
 ---
 
 ### Engineering Seamless Mobility

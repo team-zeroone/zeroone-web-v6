@@ -7,8 +7,8 @@ excerpt: "Coachello bridges the gap between human insight and artificial intelli
 image: "https://github.com/user-attachments/assets/693ee677-06ff-417b-85f2-c0dd7e34d9c0"
 hero_image: "https://github.com/user-attachments/assets/f317fda5-1d98-4683-b5d4-8a7e2680f833"
 stack: "Flutter, React, Ngrok, Microsoft Teams UI Kit, Python, FastAPI, MySQL"
-source: "_No response_"
-live: "_No response_"
+source: ""
+live: ""
 ---
 
 ### Empowering Growth Through Socratic AI

@@ -26,21 +26,21 @@ When our AI Agent processes your issue, it creates a Markdown file that serves a
 The output is split into two critical sections:
 
 ### 1. The YAML Frontmatter
-At the very top of the file, surrounded by `---`, is the metadata. This is structured data extracted directly from the form fields you filled out (Type, Excerpt, Live Links, Tech Stack, and Thumbnail Data). WordPress uses this structured data to populate the **Grid Cards** on the main portfolio listing page.
+At the very top of the file, surrounded by `---`, is the metadata. This is structured data extracted directly from the form fields you filled out (Type, Live Links, Tech Stack, and Thumbnail Data). WordPress uses this structured data to populate the **Grid Cards** on the main portfolio listing page.
 
 **Example:**
 ```yaml
 ---
 title: "Project Alpha"  # Automatically grabbed from your issue title.
 slug: "project-alpha"   # Converted into a URL-friendly lowercase string.
-type: "Design"     # Grabbed exactly from the dropdown menu.
+type: "Tech & Design"   # Selected via checkboxes. Can be "Tech", "Design", or "Tech & Design".
 date: "2026-04-20T18:59:11.621Z" # Injected by the AI Agent based on submission time.
-excerpt: "A sophisticated design system built for scale." # Extracted and refined automatically by AI from your Brain Dump.
-image: "https://images.pexels.com/..." # Downloaded and synced to WP Media.
-hero_image: "https://images.pexels.com/..." # Optional secondary image for the project header.
+excerpt: "A sophisticated design system built for scale." # Refined automatically by AI from your Brain Dump.
+image: "https://images.pexels.com/..." # Thumbnail. Downloaded and synced to WP Media.
+hero_image: "https://images.pexels.com/..." # Optional header image for the project page.
 stack: "Figma, Node.js" # Parsed the stack list.
-source: "https://github.com/..." # Recognized source URL.
-live: "https://example.com/project-alpha" # Read the live URL properly.
+source: "https://figma.com/..." # Project file link (GitHub, Figma, Dribbble, etc.).
+live: "https://example.com/project-alpha" # Live website URL.
 ---
 ```
 

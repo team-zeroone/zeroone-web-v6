@@ -62,8 +62,11 @@ Before uploading to WordPress, images are automatically optimized using `sharp`:
 -   **Compression:** Converted to an optimized format, drastically reducing file size (e.g., 8MB → 350KB).
 -   This prevents WordPress from timing out or crashing during thumbnail generation.
 
+### Duplicate Prevention
+The sync script searches the WordPress Media Library by slug before uploading. If an image with the same slug already exists, it **reuses the existing media ID** and skips the download/upload entirely. This prevents the media library from filling up with duplicates on repeated syncs.
+
 ### Upload to WordPress
-The optimized image is uploaded to the **WordPress Media Library** via the REST API and set as the post's **Featured Image** (`featured_media`). The upload step also includes retry logic for `503` errors from the hosting server.
+The optimized image is uploaded to the **WordPress Media Library** via the REST API. The **Thumbnail** is set as the post's **Featured Image** (`featured_media`). If a **Hero Image** is provided, it is uploaded separately and stored as `hero_image_id` post meta. The upload step also includes retry logic for `503` errors from the hosting server.
 
 ---
 
@@ -75,6 +78,9 @@ The optimized image is uploaded to the **WordPress Media Library** via the REST 
 | `.github/workflows/sync-portfolio.yml` | The WordPress Sync Pipeline (Merge → WP). |
 | `scripts/process-portfolio.js` | The AI Agent (Gemini content generation with tiered fallback). |
 | `scripts/sync-wordpress.js` | The WordPress Syncer (markdown → REST API with image optimization). |
+| `scripts/wp-portfolio-cpt.php` | WordPress Plugin: registers CPT, meta fields, grid/meta shortcodes, and CSS. |
+| `scripts/single-portfolio.php` | WordPress Template: single project page with hero image fallback. |
+| `scripts/archive-portfolio.php` | WordPress Template: portfolio archive/listing page. |
 | `scripts/diagnose.js` | Diagnostic tool for troubleshooting connectivity and auth issues. |
 
 ---
@@ -87,12 +93,13 @@ If you are manually creating or editing files in `content/portfolio/`, they MUST
 | :--- | :--- | :--- |
 | `title` | The project name shown in WordPress. | Yes |
 | `slug` | The URL identifier (must be unique). | Yes |
-| `type` | "Tech" or "Design". | Yes |
+| `type` | "Tech", "Design", or "Tech & Design". | Yes |
 | `date` | ISO timestamp of the project. | Yes |
-| `excerpt` | A short one-liner for grid cards. | Yes |
-| `image` | Direct URL or GitHub attachment URL. | Yes |
+| `excerpt` | A short one-liner for grid cards (AI-generated). | Yes |
+| `image` | Thumbnail URL (GitHub attachment or direct). | Yes |
+| `hero_image` | Optional header image for the project page. Falls back to thumbnail. | No |
 | `stack` | Technologies used (comma separated). | No |
-| `source` | Link to GitHub/Figma. | No |
+| `source` | Link to project files (GitHub, Figma, Dribbble, etc.). | No |
 | `live` | Link to the live website. | No |
 
 **Example:**
@@ -100,12 +107,13 @@ If you are manually creating or editing files in `content/portfolio/`, they MUST
 ---
 title: "Project Alpha"
 slug: "project-alpha"
-type: "Tech"
+type: "Tech & Design"
 date: "2026-04-22T00:00:00Z"
 excerpt: "A cool app built with React."
 image: "https://example.com/thumb.png"
+hero_image: "https://example.com/hero.png"
 stack: "React, Firebase"
-source: "https://github.com/user/repo"
+source: "https://figma.com/file/..."
 live: "https://my-app.com"
 ---
 ```
@@ -121,11 +129,15 @@ Projects are stored in the Custom Post Type: **`portfolio`**.
 ### 2. Custom Meta Fields
 The automation script pushes data into the following standard WordPress Post Meta keys:
 - `stack`: A comma-separated string of technologies (e.g., "React, Node.js").
-- `source`: The URL to the GitHub or Figma source file.
+- `source`: The URL to the project file (GitHub, Figma, Dribbble, etc.).
 - `live`: The URL to the live production website.
+- `hero_image_id`: The WordPress Media Library ID of the hero/header image.
+- `project_type`: The project classification (e.g., "Tech", "Design", or "Tech & Design"). Displayed as the category tag on grid cards.
 
-### 3. Images (Featured Image)
-The script automatically downloads images from GitHub/External URLs and uploads them to the **WordPress Media Library**. It then sets them as the native **"Featured Image"** (`_thumbnail_id`) for each project. You can use `get_the_post_thumbnail_url()` or standard Elementor widgets to display them.
+### 3. Images
+The script automatically downloads images from GitHub/External URLs, optimizes them via `sharp`, and uploads them to the **WordPress Media Library**.
+- **Thumbnail** → Set as the native **Featured Image** (`_thumbnail_id`). Use `get_the_post_thumbnail_url()` to display.
+- **Hero Image** → Stored as `hero_image_id` post meta. The `single-portfolio.php` template uses this for the full-width header, falling back to the thumbnail if not provided.
 
 ### 4. Querying via REST API
 If you are building aheadless front end, you can fetch all projects at:

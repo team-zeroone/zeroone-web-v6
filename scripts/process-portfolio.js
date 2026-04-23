@@ -134,11 +134,25 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
 
     let generatedBody = '';
     let refinedExcerpt = '';
-    let successfulModel = '';
+    let successfulModel = 'skipped (existing file)';
 
-    for (const modelId of MODELS_TO_TRY) {
-        try {
-            console.log(`\n--- Attempting generation with ${modelId} ---`);
+    const filePath = `content/portfolio/${slug}.md`;
+    const isUpdate = fs.existsSync(filePath);
+    const forceRegen = issue.title.toLowerCase().includes('[regen]');
+
+    if (isUpdate && !forceRegen) {
+        console.log(`\n--- Existing project found at ${filePath} ---`);
+        console.log(`Preserving existing content. To force re-generation, add '[REGEN]' to the issue title.`);
+        const existingFile = fs.readFileSync(filePath, 'utf8');
+        const { data: existingData, content: existingContent } = matter(existingFile);
+        generatedBody = existingContent.trim();
+        refinedExcerpt = existingData.excerpt;
+    } else {
+        if (forceRegen) console.log('\n--- Force Re-generation detected ([REGEN]) ---');
+        
+        for (const modelId of MODELS_TO_TRY) {
+            try {
+                console.log(`\n--- Attempting generation with ${modelId} ---`);
             const model = genAI.getGenerativeModel({
                 model: modelId,
                 systemInstruction: systemPrompt,
@@ -198,10 +212,6 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
 
     const markdown = finalFrontmatter + '\n\n' + generatedBody.trim() + '\n';
 
-    const filePath = `content/portfolio/${slug}.md`;
-    
-    // Check if it's a new project or an update
-    const isUpdate = fs.existsSync(filePath);
     const actionLabel = isUpdate ? 'Update' : 'New';
     const actionSlug = isUpdate ? 'update' : 'add';
 

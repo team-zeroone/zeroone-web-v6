@@ -1,7 +1,7 @@
 ---
 title: "StudyQ"
 slug: "studyq"
-type: "Tech"
+type: "Tech & Design"
 date: "2026-04-22T18:58:28.754Z"
 excerpt: "A collaborative learning ecosystem that empowers educators to build interactive exam modules and provides students with an adaptive, streamlined environment for mastering complex concepts."
 image: "https://github.com/user-attachments/assets/0135204a-73e9-4a39-baa2-b05a09f3717b"

@@ -1,7 +1,7 @@
 ---
 title: "Study Reserve"
 slug: "study-reserve"
-type: "Tech"
+type: "Tech & Design"
 date: "2026-04-22T19:13:14.588Z"
 excerpt: "A comprehensive, cross-platform educational ecosystem providing secure content hosting and integrated management tools for institutions and independent lecturers worldwide."
 image: "https://github.com/user-attachments/assets/e14ee80e-9392-4f79-9cb4-b58737cab5aa"

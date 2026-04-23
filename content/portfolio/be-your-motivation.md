@@ -1,7 +1,7 @@
 ---
 title: "Be Your Motivation"
 slug: "be-your-motivation"
-type: "Tech"
+type: "Tech & Design"
 date: "2026-04-22T19:09:07.582Z"
 excerpt: "A refined fitness and nutrition ecosystem that transforms daily routines into sustainable habits through minimalist design and personalized performance tracking."
 image: "https://github.com/user-attachments/assets/49aa4db7-bf53-480f-838b-afcc3c4250e3"

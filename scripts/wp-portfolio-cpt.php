@@ -37,7 +37,7 @@ function zot_register_portfolio_cpt()
 
     register_post_type('portfolio', $args);
 
-    $meta_fields = array('stack', 'source', 'live', 'hero_image_id');
+    $meta_fields = array('stack', 'source', 'live', 'hero_image_id', 'project_type');
     foreach ($meta_fields as $field) {
         register_post_meta('portfolio', $field, array(
             'show_in_rest' => true,
@@ -301,7 +301,7 @@ function zot_portfolio_grid_shortcode()
     while ($query->have_posts()) {
         $query->the_post();
         $thumb = get_the_post_thumbnail_url(get_the_ID(), 'large') ?: 'https://ui.shadcn.com/placeholder.svg';
-        $stack = get_post_meta(get_the_ID(), 'stack', true);
+        $type = get_post_meta(get_the_ID(), 'project_type', true);
 
         $output .= sprintf(
             '<a href="%s" class="zot-card">
@@ -314,7 +314,7 @@ function zot_portfolio_grid_shortcode()
             get_permalink(),
             $thumb,
             get_the_title(),
-            $stack ? explode(',', $stack)[0] : 'Project',
+            $type ?: 'Project',
             get_the_title(),
             get_the_excerpt()
         );

@@ -79,7 +79,8 @@ async function syncToWordPress() {
                     stack: data.stack || '',
                     source: data.source || '',
                     live: data.live || '',
-                    hero_image_id: heroImageId ? String(heroImageId) : ''
+                    hero_image_id: heroImageId ? String(heroImageId) : '',
+                    project_type: data.type || ''
                 }
             };
 

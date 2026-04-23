@@ -253,7 +253,14 @@ function parseIssueBody(body) {
     if (content === '_No response_') content = '';
     
     if (header.includes('project title')) data.title = content;
-    else if (header.includes('project type')) data.type = content;
+    else if (header.includes('project type')) {
+        const matches = [...content.matchAll(/- \[[xX]\]\s*(.+)/g)];
+        if (matches.length > 0) {
+            data.type = matches.map(m => m[1].trim()).join(' & ');
+        } else {
+            data.type = content;
+        }
+    }
     else if (header.includes('thumbnail')) {
         const match = content.match(/(?:!\[.*?\]\((.*?)\))|(http[^\s]+)/);
         if (match) {

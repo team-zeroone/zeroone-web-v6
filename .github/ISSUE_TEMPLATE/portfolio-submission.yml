@@ -6,13 +6,13 @@ body:
     attributes:
       value: |
         If you're unsure how this works, see the <a href="https://github.com/team-zeroone/zeroone-web-v6#readme" target="_blank">Portfolio Manager Guide</a>.
-  - type: dropdown
+  - type: checkboxes
     id: type
     attributes:
       label: Project Type
       options:
-        - Tech
-        - Design
+        - label: Tech
+        - label: Design
     validations:
       required: true
   - type: textarea

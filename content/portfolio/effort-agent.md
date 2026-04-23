@@ -1,7 +1,7 @@
 ---
 title: "Effort Agent"
 slug: "effort-agent"
-type: "Tech"
+type: "Tech & Design"
 date: "2026-04-22T19:19:46.522Z"
 excerpt: "A sophisticated AI-driven content ecosystem engineered for critical thinking, featuring a fully optimized SEO architecture and high-performance, dynamic search visibility."
 image: "https://github.com/user-attachments/assets/3ffa2567-e9f1-479c-b200-d24921486b7a"

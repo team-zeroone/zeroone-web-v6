@@ -1,7 +1,7 @@
 ---
 title: "Lexigram"
 slug: "lexigram"
-type: "Tech"
+type: "Tech & Design"
 date: "2026-04-22T19:05:23.554Z"
 excerpt: "Lexigram transforms language acquisition into an addictive digital experience through real-time data streaming and interactive gamified learning paths for French fluency."
 image: "https://github.com/user-attachments/assets/19d3d3d0-8c21-45c4-a28f-bd909a2bd008"

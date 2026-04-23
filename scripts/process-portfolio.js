@@ -189,16 +189,17 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
                     await sleep(waitTime);
                 }
             }
-            if (generatedBody) {
-                console.log(`Successfully generated content using ${modelId}`);
-                break;
+                if (generatedBody) {
+                    console.log(`Successfully generated content using ${modelId}`);
+                    break;
+                }
+            } catch (modelErr) {
+                console.warn(`Model ${modelId} failed completely: ${modelErr.message}`);
+                if (modelId === MODELS_TO_TRY[MODELS_TO_TRY.length - 1]) {
+                    throw new Error(`All Gemini models in stack failed.`);
+                }
+                console.log('Switching to fallback model...');
             }
-        } catch (modelErr) {
-            console.warn(`Model ${modelId} failed completely.`);
-            if (modelId === MODELS_TO_TRY[MODELS_TO_TRY.length - 1]) {
-                throw new Error(`All Gemini models in stack failed: ${modelErr.message}`);
-            }
-            console.log('Switching to fallback model...');
         }
     }
 

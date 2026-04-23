@@ -12,7 +12,7 @@ live: ""
 ---
 
 ### Empowering Growth Through Socratic AI
-Coachello moves beyond the transactional nature of traditional mentoring. By synthesizing thousands of professional coaching conversations, our platform functions as a mirror for personal growth rather than a source of simple answers. Built with a robust stack comprising Flutter, React, and a FastAPI backend, the system utilizes generative intelligence to pose thought-provoking questions that challenge users to arrive at their own solutions. 
+Coachello moves beyond the transactional nature of traditional mentoring. By synthesizing thousands of professional coaching conversations, our platform functions as a mirror for personal growth rather than a source of simple answers. Built with a robust stack comprising Flutter, React, and a FastAPI backend, the system utilizes generative intelligence to pose thought-provoking questions that challenge users to arrive at their own solutions.
 
 ### From Instant Support to Long-term Transformation
 The platform is designed for versatility, offering two primary modes to support user evolution. For immediate needs, the Quick Resolution mode provides bite-sized, real-time reflection prompts, acting as a coach in your pocket for daily obstacles. For those tackling complex milestones, the Ambitious Goal mode creates a structured, hyper-personalized journey defined by recurring check-ins and objective-driven feedback. 

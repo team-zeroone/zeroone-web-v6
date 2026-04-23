@@ -120,7 +120,7 @@ function zot_portfolio_styles()
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.8;
+            opacity: 1;
         }
 
         /* Grid */
@@ -338,9 +338,12 @@ function zot_portfolio_meta_shortcode()
     $source = get_post_meta($post->ID, 'source', true);
 
     // Sanitize missing fields that might have old github issue placeholders
-    if ($stack === '_No response_') $stack = '';
-    if ($live === '_No response_') $live = '';
-    if ($source === '_No response_') $source = '';
+    if ($stack === '_No response_')
+        $stack = '';
+    if ($live === '_No response_')
+        $live = '';
+    if ($source === '_No response_')
+        $source = '';
 
     $output = '<div class="zot-meta-bar">';
 
@@ -361,7 +364,7 @@ function zot_portfolio_meta_shortcode()
         } elseif (strpos($source, 'github.com') !== false) {
             $source_label = 'View Code';
         }
-        
+
         $output .= '<div class="zot-meta-item"><span class="zot-meta-label">Project File</span><span class="zot-meta-val"><a href="' . esc_url($source) . '" target="_blank">' . esc_html($source_label) . '</a></span></div>';
     }
 

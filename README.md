@@ -60,6 +60,7 @@ Below the frontmatter is the beautifully written article. The **Gemini AI** mode
 - Go to the `content/portfolio/` folder.
 - Open the `.md` file for the project you wish to remove.
 - Click the **...** menu and select **Delete file**, then commit the change.
+- The sync workflow will automatically **trash the corresponding post** on the WordPress site. No manual cleanup needed.
 
 ---
 

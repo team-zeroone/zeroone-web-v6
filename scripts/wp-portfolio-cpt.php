@@ -121,6 +121,49 @@ function zot_portfolio_styles()
             height: 100%;
             object-fit: cover;
             opacity: 1;
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .zot-hero img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Lightbox */
+        .zot-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 40px;
+        }
+
+        .zot-lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .zot-lightbox img {
+            max-width: 900px;
+            max-height: 80vh;
+            object-fit: contain;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .zot-lightbox.active img {
+            transform: scale(1);
         }
 
         /* Grid */

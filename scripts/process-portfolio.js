@@ -4,6 +4,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const slugify = require('slugify');
+const matter = require('gray-matter');
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 

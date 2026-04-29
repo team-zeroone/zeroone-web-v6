@@ -122,7 +122,8 @@ async function syncToWordPress() {
     // 5. Handle Deleted Files — Trash corresponding WordPress posts
     const deletedFiles = (process.env.DELETED_FILES || '').trim();
     if (deletedFiles) {
-        const deletedPaths = deletedFiles.split(' ').filter(f => f.endsWith('.md'));
+        // Accept both full paths (e.g. content/portfolio/test-1.md) and bare slugs (e.g. test-1)
+        const deletedPaths = deletedFiles.split(' ').filter(f => f.length > 0);
         console.log(`\n--- Processing ${deletedPaths.length} deleted file(s) ---`);
 
         for (const deletedPath of deletedPaths) {

@@ -47,6 +47,10 @@ async function run() {
     if (!data.title || data.title === '_No response_') {
         data.title = issue.title.replace(/^\[New Portfolio\]:\s*/i, '').trim();
     }
+    
+    if (data.title) {
+        data.title = data.title.replace(/\[REGEN\]/gi, '').trim();
+    }
 
     // Default to a placeholder if thumbnail is missing
     if (!data.thumbnail || data.thumbnail === '_No response_') {
@@ -253,7 +257,7 @@ Rules:
 
     let finalMarkdownBody = generatedBody.trim();
     if (generatedDiagram) {
-         finalMarkdownBody = `### Architecture at a Glance\n\n${generatedDiagram}\n\n${finalMarkdownBody}`;
+         finalMarkdownBody = `### Architecture at a Glance\n\n<div style="background-color: white; padding: 1rem; border-radius: 8px;">\n\n${generatedDiagram}\n\n</div>\n\n${finalMarkdownBody}`;
     }
 
     const markdown = finalFrontmatter + '\n\n' + finalMarkdownBody + '\n';

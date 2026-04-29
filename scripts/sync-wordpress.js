@@ -32,86 +32,92 @@ async function syncToWordPress() {
         'Authorization': `Basic ${wpAuth}`
     };
 
-    // Get files to process from command line arguments
-    const files = process.argv.slice(2).filter(arg => arg.endsWith('.md'));
-
-    if (files.length === 0) {
-        console.log('No Markdown files provided for sync.');
-        return;
+    // Get files to process (Added/Modified)
+    let files = [];
+    if (process.env.ALL_CHANGED_FILES) {
+        files = process.env.ALL_CHANGED_FILES.split(' ').filter(f => f.endsWith('.md'));
+    } else {
+        files = process.argv.slice(2).filter(arg => arg.endsWith('.md'));
     }
 
-    for (const filePath of files) {
-        try {
-            console.log(`\nProcessing: ${filePath}`);
-            
-            if (!fs.existsSync(filePath)) {
-                console.log(`File does not exist: ${filePath}`);
-                continue;
-            }
-
-            const fileContent = fs.readFileSync(filePath, 'utf8');
-            const { data, content } = matter(fileContent);
-            
-            // 1. Prepare Content
-            const htmlContent = marked(content);
-            const slug = data.slug || path.basename(filePath, '.md');
-
-            // 2. Handle Thumbnail / Featured Image
-            let featuredImageId = null;
-            if (data.image) {
-                featuredImageId = await syncFeaturedImage(data.image, slug, wpHeaders);
-            }
-
-            // Also Handle Hero Image (if provided)
-            let heroImageId = null;
-            if (data.hero_image) {
-                heroImageId = await syncFeaturedImage(data.hero_image, `${slug}-hero`, wpHeaders);
-            }
-
-            // 3. Prepare Payload
-            const payload = {
-                title: data.title,
-                content: htmlContent,
-                status: 'publish',
-                slug: slug,
-                excerpt: data.excerpt || '',
-                meta: {
-                    stack: data.stack || '',
-                    source: data.source || '',
-                    live: data.live || '',
-                    hero_image_id: heroImageId ? String(heroImageId) : '',
-                    project_type: data.type || ''
+    if (files.length > 0) {
+        console.log(`\n--- Syncing ${files.length} added/modified file(s) ---`);
+        for (const filePath of files) {
+            try {
+                console.log(`\nProcessing: ${filePath}`);
+                
+                if (!fs.existsSync(filePath)) {
+                    console.log(`File does not exist (possibly deleted): ${filePath}`);
+                    continue;
                 }
-            };
 
-            if (featuredImageId) {
-                payload.featured_media = featuredImageId;
+                const fileContent = fs.readFileSync(filePath, 'utf8');
+                const { data, content } = matter(fileContent);
+                
+                // 1. Prepare Content
+                const htmlContent = marked(content);
+                const slug = data.slug || path.basename(filePath, '.md');
+
+                // 2. Handle Thumbnail / Featured Image
+                let featuredImageId = null;
+                if (data.image) {
+                    featuredImageId = await syncFeaturedImage(data.image, slug, wpHeaders);
+                }
+
+                // Also Handle Hero Image (if provided)
+                let heroImageId = null;
+                if (data.hero_image) {
+                    heroImageId = await syncFeaturedImage(data.hero_image, `${slug}-hero`, wpHeaders);
+                }
+
+                // 3. Prepare Payload
+                const payload = {
+                    title: data.title,
+                    content: htmlContent,
+                    status: 'publish',
+                    slug: slug,
+                    excerpt: data.excerpt || '',
+                    meta: {
+                        stack: data.stack || '',
+                        source: data.source || '',
+                        live: data.live || '',
+                        hero_image_id: heroImageId ? String(heroImageId) : '',
+                        project_type: data.type || ''
+                    }
+                };
+
+                if (featuredImageId) {
+                    payload.featured_media = featuredImageId;
+                }
+
+                if (isDryRun) {
+                    console.log('PLAN: Would Sync Post with payload:', JSON.stringify(payload, null, 2));
+                    continue;
+                }
+
+                // 4. Check if post exists
+                const searchUrl = `${WP_API_URL}/wp/v2/portfolio?slug=${slug}&status=any`;
+                const searchResponse = await axios.get(searchUrl, { headers: wpHeaders });
+                const existingPost = searchResponse.data[0];
+
+                if (existingPost) {
+                    console.log(`Updating existing post (ID: ${existingPost.id})...`);
+                    await axios.post(`${WP_API_URL}/wp/v2/portfolio/${existingPost.id}`, payload, { headers: wpHeaders });
+                    console.log('Successfully updated!');
+                } else {
+                    console.log('Creating new post...');
+                    await axios.post(`${WP_API_URL}/wp/v2/portfolio`, payload, { headers: wpHeaders });
+                    console.log('Successfully created!');
+                }
+
+            } catch (err) {
+                console.error(`Error processing ${filePath}:`, err.response?.data || err.message);
             }
-
-            if (isDryRun) {
-                console.log('PLAN: Would Sync Post with payload:', JSON.stringify(payload, null, 2));
-                continue;
-            }
-
-            // 4. Check if post exists
-            const searchUrl = `${WP_API_URL}/wp/v2/portfolio?slug=${slug}&status=any`;
-            const searchResponse = await axios.get(searchUrl, { headers: wpHeaders });
-            const existingPost = searchResponse.data[0];
-
-            if (existingPost) {
-                console.log(`Updating existing post (ID: ${existingPost.id})...`);
-                await axios.post(`${WP_API_URL}/wp/v2/portfolio/${existingPost.id}`, payload, { headers: wpHeaders });
-                console.log('Successfully updated!');
-            } else {
-                console.log('Creating new post...');
-                await axios.post(`${WP_API_URL}/wp/v2/portfolio`, payload, { headers: wpHeaders });
-                console.log('Successfully created!');
-            }
-
-        } catch (err) {
-            console.error(`Error processing ${filePath}:`, err.response?.data || err.message);
         }
+    } else {
+        console.log('No new or modified Markdown files to sync.');
     }
+
 
     // 5. Handle Deleted Files — Trash corresponding WordPress posts
     const deletedFiles = (process.env.DELETED_FILES || '').trim();

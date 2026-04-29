@@ -116,7 +116,7 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
 Generate a Mermaid.js diagram representing the architecture, data flow, or tech stack of the given project.
 Rules:
 1. ONLY output valid Mermaid code wrapped in a \`\`\`mermaid code block. No other text.
-2. Choose the best chart type: flowchart LR or TD is usually best.
+2. Use \`flowchart TD\` (Top-Down) instead of LR (Left-Right) to prevent the diagram from becoming excessively wide and hard to read. You can group nodes using subgraphs to keep it compact.
 3. Keep it clean, professional, and visually balanced. Use concise labels.
 4. DO NOT use parentheses or brackets inside node labels if it breaks Mermaid syntax.
 5. Aim for 5-15 nodes max. Don't make it overly complex.`;

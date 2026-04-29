@@ -100,7 +100,7 @@ RULES:
 3. Summary length: 15-25 words. One sharp sentence that captures the project's essence for a gallery card.
 4. Do NOT include the project title anywhere in your output.
 5. Never use the em-dash character. Use standard dashes (-), colons, or commas instead.
-6. No preamble, no explanation, no code fences, no frontmatter.
+6. No preamble, no explanation, no frontmatter.
 
 You MUST follow this exact output format:
 Line 1: EXCERPT: [your refined 15-25 word summary]
@@ -116,7 +116,7 @@ Example output:
 EXCERPT: A real-time ride-sharing platform connecting 50k+ urban commuters with drivers through intelligent geolocation matching.
 
 ### Smarter Commutes, One Tap Away
-QuickRide reimagines urban transportation by connecting commuters with nearby drivers in real time. Built on React Native for seamless cross-platform performance, the app delivers sub-second ride matching powered by a custom geolocation engine. The design prioritizes a clean, frictionless interface, ensuring that users can request a ride instantly. By abstracting the complex backend logic, the platform provides a premium, zero-latency experience that redefines modern mobility.`;
+The platform reimagines urban transportation by connecting commuters with nearby drivers in real time. Built on React Native for seamless cross-platform performance, the app delivers sub-second ride matching powered by a custom geolocation engine. The design prioritizes a clean, frictionless interface, ensuring that users can request a ride instantly. By abstracting the complex backend logic, the platform provides a premium, zero-latency experience that redefines modern mobility.`;
 
     const mermaidSystemPrompt = `You are an expert software architect and technical communicator.
 Generate a Mermaid.js diagram representing the architecture, data flow, or tech stack of the given project. Prefer data flow if clear, otherwise tech stack.
@@ -127,7 +127,8 @@ Rules:
 4. DO NOT use parentheses or brackets inside node labels if it breaks Mermaid syntax.
 5. Aim for 5-15 nodes max. If the stack is simple, 5-8 nodes is preferred. Don't make it overly complex.
 6. BE EXTRA CAUTIOUS and STRICT: Only include technologies and components that are explicitly mentioned in the provided Stack or Details. Do not hallucinate or guess technologies. If unsure, stick to a high-level representation.
-7. Node IDs must be alphanumeric with no spaces, slashes, colons, or special characters. Bad: node[API/Auth] Good: node[API Auth]`;
+7. Node IDs must be alphanumeric with no spaces or special characters. Labels inside brackets may use spaces. Bad ID: api auth Good ID: apiAuth
+8. If insufficient technical detail is provided, output a simple 3-node high-level flow: Input, System, Output.`;
 
     // Optimization #1 continued: User prompt is pure data, no instructions
     const userPrompt = `Write a portfolio description for this project:

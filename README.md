@@ -52,9 +52,8 @@ Below the frontmatter is the beautifully written article. The **Gemini AI** mode
 ## 🔄 How to Update or Delete
 
 ### To Update
-- **Option A (Safe Metadata Update):** Go to the original **Issue** for the project, click **Edit**, modify your metadata (like URLs or Stack), and save. The agent will open a new PR. **Your existing Markdown description will be preserved safely.**
-- **Option B (Force AI Re-generation):** If you added a lot of new notes and want the AI to completely rewrite the project description, add **`[REGEN]`** anywhere in the Issue title before saving.
-- **Option C (Manual):** Go into the `content/portfolio/` folder, open the specific `.md` file, and edit it directly using the GitHub pencil icon.
+- **Option A (Force AI Re-generation):** If you added a lot of new notes and want the AI to completely rewrite the project description, add **`[REGEN]`** anywhere in the Issue title before saving.
+- **Option B (Manual):** Go into the `content/portfolio/` folder, open the specific `.md` file, and edit it directly using the GitHub pencil icon.
 
 ### To Delete
 - Go to the `content/portfolio/` folder.

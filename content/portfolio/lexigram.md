@@ -2,8 +2,8 @@
 title: "Lexigram"
 slug: "lexigram"
 type: "Tech & Design"
-date: "2026-04-29T15:19:33.845Z"
-excerpt: "A premium, AI-driven language learning platform that combines gamified interactivity with high-performance event-driven architecture to facilitate effortless vocabulary mastery."
+date: "2026-04-29T15:26:51.850Z"
+excerpt: "A sophisticated language learning platform that merges AI-driven personalization with a premium, gamified interface to master French vocabulary effectively."
 image: "https://github.com/user-attachments/assets/d3bd35c8-4baa-4e43-b8ea-90f5ce09b86e"
 hero_image: "https://github.com/user-attachments/assets/5383b5f7-c461-49f6-8f62-ffb7605d417f"
 stack: "FastAPI, Kafka, PostgreSQL, PgBouncer, Alembic, Redis, OpenAI, JWT, Google Sign-In, Apple Sign-In, Flutter, Riverpod, Freezed, Dio, Docker, Codemagic."
@@ -14,40 +14,41 @@ has_diagram: true
 
 ### Architecture at a Glance
 
+<div style="background: white; padding: 30px; border-radius: 12px; margin: 20px 0; border: 1px solid #eee; display: block; overflow: hidden;">
+
 ```mermaid
-%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff'}}}%%
+%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'canvasBackground': '#ffffff', 'primaryColor': '#fff' }}}%%
 flowchart TD
-    subgraph MobileClient [Mobile Client - Flutter]
-        UI[UI & Riverpod State]
-        Dio[Dio Interceptors]
+    subgraph Frontend [Mobile Client - Flutter]
+        UI[App Interface]
+        State[Riverpod & Freezed State]
+        Auth[Dio Interceptor & Auth]
     end
 
-    subgraph Backend [FastAPI Backend]
-        API[FastAPI API]
-        Kafka[Kafka Event Bus]
-        Worker[AI Consumer Services]
+    subgraph Backend [API & Intelligence]
+        FastAPI[FastAPI Service]
+        Kafka[Kafka Message Broker]
+        Workers[AI Consumer Services]
     end
 
-    subgraph DataStorage [Storage & Cache]
-        Postgres[PostgreSQL + PgBouncer]
+    subgraph Data [Storage & Infra]
+        Postgres[PostgreSQL & PgBouncer]
         Redis[Redis Cache]
-    end
-
-    subgraph External [Third Party]
         OpenAI[OpenAI API]
-        Auth[Google/Apple Auth]
     end
 
-    UI -->|JWT Auth| Auth
-    UI -->|API Requests| Dio
-    Dio -->|HTTP/JSON| API
-    API -->|Read/Write| Postgres
-    API -->|Cache| Redis
-    API -->|Emit Event| Kafka
-    Kafka -->|Consume| Worker
-    Worker -->|Prompt| OpenAI
-    Worker -->|Update| Postgres
+    UI <--> State
+    State <--> Auth
+    Auth <--> FastAPI
+    FastAPI --> Postgres
+    FastAPI --> Redis
+    FastAPI -- Produce Event --> Kafka
+    Kafka -- Consume Event --> Workers
+    Workers --> OpenAI
+    Workers --> Postgres
 ```
 
-### Redefining Language Acquisition
-Lexigram transforms language learning from a static task into an immersive, premium experience. By integrating advanced AI orchestration with a reactive mobile framework, the platform delivers a zero-latency learning environment that adapts to the user's progress in real time. We prioritize a design-led approach, utilizing a bespoke aesthetic system and intuitive micro-interactions to minimize cognitive load. This synthesis of robust backend engineering and sophisticated UI/UX ensures that complex educational tools feel personal, responsive, and effortlessly accessible for learners at every stage of their journey.
+</div>
+
+### Elevating Language Mastery Through Intelligence
+Lexigram transforms language acquisition into a frictionless, premium experience. By leveraging an asynchronous event-driven architecture, the platform offloads complex AI processing, ensuring users interact with a responsive and fluid interface. The application treats education as a lifestyle tool, employing a bespoke design system that utilizes glassmorphism and refined typography to minimize cognitive load. Through the seamless integration of spaced repetition and dynamic, context-aware content generation, the platform offers a uniquely personalized learning journey that remains both highly performant and aesthetically captivating, setting a new standard for intelligent educational technology.

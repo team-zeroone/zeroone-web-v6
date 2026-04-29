@@ -57,6 +57,10 @@ async function run() {
         data.thumbnail = 'https://ui.shadcn.com/placeholder.svg';
     }
 
+    if (!data.hero_image || data.hero_image === '_No response_') {
+        data.hero_image = data.thumbnail;
+    }
+
     console.log('Parsed data:', JSON.stringify(data, null, 2));
 
     // ========================================

@@ -244,7 +244,7 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
                 headers: wpHeaders
             });
             const existing = searchResponse.data.find(m => 
-                m.slug && m.slug.startsWith(slug)
+                m.slug === slug
             );
             if (existing) {
                 console.log(`Image already exists in Media Library (ID: ${existing.id}, slug: ${existing.slug}). Skipping upload.`);

@@ -2,13 +2,15 @@
 title: "Lexigram"
 slug: "lexigram"
 type: "Tech & Design"
-date: "2026-04-29T13:55:56.033Z"
+date: "2026-04-29T14:06:55.087Z"
 excerpt: "Lexigram blends sophisticated AI orchestration with premium UI design to transform language acquisition into an engaging, high-performance digital lifestyle experience."
 image: "https://github.com/user-attachments/assets/cc061ffb-4115-4ecc-9548-a36eb1ff48e2"
 hero_image: "https://github.com/user-attachments/assets/a6ecc3c6-e746-4246-b252-3f3cbda572cd"
 stack: "Figma, FastAPI, Kafka, PostgreSQL, PgBouncer, Alembic, Redis, OpenAI, JWT, Google Sign-In, Apple Sign-In, Flutter, Riverpod, Freezed, Dio, Docker, Codemagic"
 source: ""
-live: "https://www.lexigram.ai/"
+live: "https://www.lexigram.ai/
+
+[REGEN]"
 has_diagram: true
 ---
 

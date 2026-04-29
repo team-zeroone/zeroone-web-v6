@@ -60,7 +60,15 @@ Below the frontmatter is the beautifully written article. The **Gemini AI** mode
 - Go to the `content/portfolio/` folder.
 - Open the `.md` file for the project you wish to remove.
 - Click the **...** menu and select **Delete file**, then commit the change.
-- The sync workflow will automatically **trash the corresponding post** on the WordPress site. No manual cleanup needed.
+- The sync workflow will automatically **trash the corresponding post and permanently delete its associated media files** (thumbnail & hero image) on the WordPress site. No manual cleanup needed.
+
+#### Force Delete (Manual Cleanup)
+If a project was already deleted from the repo but still exists on WordPress (e.g., the sync didn't run properly), you can manually trigger a cleanup:
+
+1. Go to the **Actions** tab → select **WordPress Sync** from the sidebar.
+2. Click **Run workflow**.
+3. In the **"force_delete"** input, enter the slug(s) of the project(s) to remove, separated by spaces (e.g., `studyq coachello lift`).
+4. Click **Run workflow**. The script will find and trash the matching WordPress posts and their media.
 
 ---
 

@@ -28,17 +28,17 @@ jobs:
           files: content/portfolio/*.md
 
       - name: Setup Node.js
-        if: steps.changed-files.outputs.any_changed == 'true' || github.event.inputs.force_delete != ''
+        if: steps.changed-files.outputs.any_changed == 'true' || steps.changed-files.outputs.deleted_files != '' || github.event.inputs.force_delete != ''
         uses: actions/setup-node@v6
         with:
           node-version: '24'
 
       - name: Install Dependencies
-        if: steps.changed-files.outputs.any_changed == 'true' || github.event.inputs.force_delete != ''
+        if: steps.changed-files.outputs.any_changed == 'true' || steps.changed-files.outputs.deleted_files != '' || github.event.inputs.force_delete != ''
         run: npm install
 
       - name: Sync to WordPress
-        if: steps.changed-files.outputs.any_changed == 'true' || github.event.inputs.force_delete != ''
+        if: steps.changed-files.outputs.any_changed == 'true' || steps.changed-files.outputs.deleted_files != '' || github.event.inputs.force_delete != ''
         env:
           WP_API_URL: ${{ secrets.WP_API_URL }}
           WP_USERNAME: ${{ secrets.WP_USERNAME }}

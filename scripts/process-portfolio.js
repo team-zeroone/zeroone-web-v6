@@ -75,6 +75,7 @@ hero_image: "${data.hero_image || ''}"
 stack: "${data.stack}"
 source: "${data.source_url || ''}"
 live: "${data.live_url || ''}"
+has_diagram: {DIAGRAM_PLACEHOLDER}
 ---`;
 
     // Optimization #5: Enrich sparse details
@@ -89,7 +90,7 @@ live: "${data.live_url || ''}"
     const systemPrompt = `You are a content writer for ZeroOne, a creative technology agency.
 Write professional, engaging portfolio project descriptions.
 Tone: innovative, confident, sleek. Not salesy or generic.
-Body length: 150-250 words.
+Body length: 50-100 words. Focus strictly on the high-level business value, problem solved, and design philosophy. Do NOT include detailed technical/architecture breakdowns, as that will be shown in a separate diagram.
 Summary length: 15-25 words. One sharp sentence that captures the project's essence for a gallery card.
 Never use the em-dash character. Use standard dashes (-), colons, or commas instead.
 No preamble, no explanation, no code fences, no frontmatter.
@@ -111,6 +112,15 @@ EXCERPT: A real-time ride-sharing platform connecting 50k+ urban commuters with 
 QuickRide reimagines urban transportation by connecting commuters with nearby drivers in real time. Built on React Native for seamless cross-platform performance, the app delivers sub-second ride matching powered by a custom geolocation engine.
 ...`;
 
+    const mermaidSystemPrompt = `You are an expert software architect and technical communicator.
+Generate a Mermaid.js diagram representing the architecture, data flow, or tech stack of the given project.
+Rules:
+1. ONLY output valid Mermaid code wrapped in a \`\`\`mermaid code block. No other text.
+2. Choose the best chart type: flowchart LR or TD is usually best.
+3. Keep it clean, professional, and visually balanced. Use concise labels.
+4. DO NOT use parentheses or brackets inside node labels if it breaks Mermaid syntax.
+5. Aim for 5-15 nodes max. Don't make it overly complex.`;
+
     // Optimization #1 continued: User prompt is pure data, no instructions
     const userPrompt = `Write a portfolio description for this project:
 - Title: ${data.title}
@@ -121,7 +131,7 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
     // Output validation: must contain EXCERPT: line and body starting with #
     function isValidOutput(text) {
         const trimmed = text.trim();
-        return trimmed.startsWith('EXCERPT:') && trimmed.includes('\n#') && trimmed.length > 250;
+        return trimmed.startsWith('EXCERPT:') && trimmed.includes('\n#') && trimmed.length > 100;
     }
 
     // Parse EXCERPT: line from model output
@@ -135,6 +145,8 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
 
     let generatedBody = '';
     let refinedExcerpt = '';
+    let generatedDiagram = '';
+    let hasExistingDiagram = false;
     let successfulModel = 'skipped (existing file)';
 
     const filePath = `content/portfolio/${slug}.md`;
@@ -148,6 +160,7 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
         const { data: existingData, content: existingContent } = matter(existingFile);
         generatedBody = existingContent.trim();
         refinedExcerpt = existingData.excerpt;
+        hasExistingDiagram = existingData.has_diagram === true || existingContent.includes('```mermaid');
     } else {
         if (forceRegen) console.log('\n--- Force Re-generation detected ([REGEN]) ---');
         
@@ -182,6 +195,27 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
                     generatedBody = parsed.body;
                     refinedExcerpt = parsed.excerpt;
                     successfulModel = modelId;
+
+                    // Generate diagram
+                    try {
+                        console.log(`Generating Mermaid diagram with ${modelId}...`);
+                        const diagramModel = genAI.getGenerativeModel({ model: modelId, systemInstruction: mermaidSystemPrompt });
+                        const diagramResult = await diagramModel.generateContent(userPrompt);
+                        const diagramText = diagramResult.response.text();
+                        const match = diagramText.match(/```mermaid\n([\s\S]*?)```/);
+                        if (match) {
+                            generatedDiagram = "```mermaid\n" + match[1].trim() + "\n```";
+                            console.log('Successfully generated diagram.');
+                        } else if (diagramText.includes('graph ') || diagramText.includes('flowchart ')) {
+                            generatedDiagram = "```mermaid\n" + diagramText.replace(/```mermaid/g, '').replace(/```/g, '').trim() + "\n```";
+                            console.log('Successfully generated diagram (recovered).');
+                        } else {
+                            console.warn('Failed to parse Mermaid diagram from output.');
+                        }
+                    } catch (diagramErr) {
+                         console.warn(`Failed to generate diagram: ${diagramErr.message}`);
+                    }
+
                     break;
                 } catch (err) {
                     if (i === maxRetries - 1) throw err;
@@ -206,13 +240,23 @@ QuickRide reimagines urban transportation by connecting commuters with nearby dr
 
     // Assemble final file: use AI-refined excerpt in frontmatter
     const finalExcerpt = refinedExcerpt || 'A professional showcase by ZeroOne Technologies.';
-    const finalFrontmatter = frontmatter.replace(
+    let finalFrontmatter = frontmatter.replace(
         '{EXCERPT_PLACEHOLDER}',
         finalExcerpt.replace(/"/g, '\\"')
     );
+    const hasDiagramFinal = hasExistingDiagram || !!generatedDiagram;
+    finalFrontmatter = finalFrontmatter.replace(
+        '{DIAGRAM_PLACEHOLDER}',
+        hasDiagramFinal ? 'true' : 'false'
+    );
     console.log(`Refined excerpt: "${finalExcerpt}"`);
 
-    const markdown = finalFrontmatter + '\n\n' + generatedBody.trim() + '\n';
+    let finalMarkdownBody = generatedBody.trim();
+    if (generatedDiagram) {
+         finalMarkdownBody = `### Architecture at a Glance\n\n${generatedDiagram}\n\n${finalMarkdownBody}`;
+    }
+
+    const markdown = finalFrontmatter + '\n\n' + finalMarkdownBody + '\n';
 
     const actionLabel = isUpdate ? 'Update' : 'New';
     const actionSlug = isUpdate ? 'update' : 'add';

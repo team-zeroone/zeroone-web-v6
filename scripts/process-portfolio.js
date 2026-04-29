@@ -128,7 +128,8 @@ Rules:
 5. Aim for 5-15 nodes max. If the stack is simple, 5-8 nodes is preferred. Don't make it overly complex.
 6. BE EXTRA CAUTIOUS and STRICT: Only include technologies and components that are explicitly mentioned in the provided Stack or Details. Do not hallucinate or guess technologies. If unsure, stick to a high-level representation.
 7. Node IDs must be alphanumeric with no spaces or special characters. Labels inside brackets may use spaces. Bad ID: api auth Good ID: apiAuth
-8. If insufficient technical detail is provided, output a simple 3-node high-level flow: Input, System, Output.`;
+8. If insufficient technical detail is provided, output a simple 3-node high-level flow: Input, System, Output.
+9. DESIGN: Use a clean, high-contrast professional style. Avoid dark-colored subgraphs; stick to light, subtle colors for groupings as the diagram will be displayed on a white background. Use "flowchart TD".`;
 
     // Optimization #1 continued: User prompt is pure data, no instructions
     const userPrompt = `Write a portfolio description for this project:
@@ -211,7 +212,7 @@ Rules:
                         const diagramModel = genAI.getGenerativeModel({ model: modelId, systemInstruction: mermaidSystemPrompt });
                         const diagramResult = await diagramModel.generateContent(userPrompt);
                         const diagramText = diagramResult.response.text();
-                        const mermaidInit = "%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff'}}}%%\n";
+                        const mermaidInit = "%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'canvasBackground': '#ffffff', 'primaryColor': '#fff' }}}%%\n";
                         const match = diagramText.match(/```mermaid\n([\s\S]*?)```/);
                         if (match) {
                             generatedDiagram = "```mermaid\n" + mermaidInit + match[1].trim() + "\n```";
@@ -263,7 +264,7 @@ Rules:
 
     let finalMarkdownBody = generatedBody.trim();
     if (generatedDiagram) {
-         finalMarkdownBody = `### Architecture at a Glance\n\n${generatedDiagram}\n\n${finalMarkdownBody}`;
+         finalMarkdownBody = `### Architecture at a Glance\n\n<div style="background: white; padding: 30px; border-radius: 12px; margin: 20px 0; border: 1px solid #eee; display: block; overflow: hidden;">\n\n${generatedDiagram}\n\n</div>\n\n${finalMarkdownBody}`;
     }
 
     const markdown = finalFrontmatter + '\n\n' + finalMarkdownBody + '\n';

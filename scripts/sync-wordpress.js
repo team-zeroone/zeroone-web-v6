@@ -135,13 +135,37 @@ async function syncToWordPress() {
                 const existingPost = searchResponse.data[0];
 
                 if (existingPost) {
+                    const mediaToDelete = [];
+                    if (existingPost.featured_media) {
+                        mediaToDelete.push(existingPost.featured_media);
+                    }
+                    if (existingPost.meta && existingPost.meta.hero_image_id) {
+                        mediaToDelete.push(existingPost.meta.hero_image_id);
+                    }
+
                     if (isDryRun) {
                         console.log(`PLAN: Would trash post "${existingPost.title.rendered}" (ID: ${existingPost.id})`);
+                        for (const mediaId of mediaToDelete) {
+                            console.log(`PLAN: Would permanently delete media ID: ${mediaId}`);
+                        }
                         continue;
                     }
+                    
                     console.log(`Trashing post "${existingPost.title.rendered}" (ID: ${existingPost.id})...`);
                     await axios.delete(`${WP_API_URL}/wp/v2/portfolio/${existingPost.id}`, { headers: wpHeaders });
                     console.log('Successfully trashed!');
+
+                    // Delete associated media
+                    for (const mediaId of mediaToDelete) {
+                        try {
+                            console.log(`Permanently deleting associated media (ID: ${mediaId})...`);
+                            // Media requires ?force=true to be permanently deleted
+                            await axios.delete(`${WP_API_URL}/wp/v2/media/${mediaId}?force=true`, { headers: wpHeaders });
+                            console.log(`Successfully deleted media ${mediaId}!`);
+                        } catch (mediaErr) {
+                            console.warn(`Failed to delete media ${mediaId}: ${mediaErr.response?.data?.message || mediaErr.message}`);
+                        }
+                    }
                 } else {
                     console.log(`No WordPress post found for slug "${deletedSlug}". Skipping.`);
                 }

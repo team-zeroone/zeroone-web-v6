@@ -25,10 +25,10 @@ body:
   - type: textarea
     id: hero_image
     attributes:
-      label: Hero Image (Optional - Drag & Drop or URL)
-      placeholder: "Used at the top of the project page. If blank, the thumbnail will be used."
+      label: Hero Image (Project Header - Drag & Drop or URL)
+      placeholder: "Drag an image here or paste a direct URL"
     validations:
-      required: false
+      required: true
   - type: textarea
     id: details
     attributes:

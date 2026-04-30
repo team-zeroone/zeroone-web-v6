@@ -2,11 +2,11 @@
 title: "Lexigram"
 slug: "lexigram"
 type: "Tech & Design"
-date: "2026-04-30T04:59:42.295Z"
+date: "2026-04-30T05:22:01.379Z"
 excerpt: "A premium, AI-driven language platform that blends gamification with high-performance engineering to make mastering French vocabulary intuitive and engaging."
-image: "https://github.com/user-attachments/assets/b9e5d8b3-1d5c-430c-a7e8-f045a933014d"
-hero_image: "https://github.com/user-attachments/assets/6b2e3e4b-adb8-44b5-af3b-562810d43fe8"
-images: ["https://github.com/user-attachments/assets/6b49ff6d-b374-4b48-bf2c-3d0693274394","https://github.com/user-attachments/assets/7fcab2e1-7ab8-4e4e-99e6-cf59cb1c1ffa","https://github.com/user-attachments/assets/e8064f1d-be15-4b40-b174-4a295684d06f","https://github.com/user-attachments/assets/fd4419d6-9978-4bf2-8eb8-7b84d436bc5f","https://github.com/user-attachments/assets/ec169bc0-3f63-420a-bd3f-9e9f0e97f85f","https://github.com/user-attachments/assets/872d4411-a2c4-4adc-b821-ecd2ace83bf6","https://github.com/user-attachments/assets/e82d0388-1d3d-4318-8e4f-2dc5b7f8e13d","https://github.com/user-attachments/assets/df70aa44-b7b1-4191-aaa9-6261e2b38dc7"]
+image: "https://github.com/user-attachments/assets/2ef5ff4a-df36-4a2a-88f0-6e5bbc206b47"
+hero_image: "https://github.com/user-attachments/assets/16b69277-bb86-49c5-ac21-212fbb8827b1"
+images: ["https://github.com/user-attachments/assets/21a7b80b-bb51-4db8-9954-e66b50af77d7"]
 stack: "Figma, FastAPI, Kafka, PostgreSQL, PgBouncer, Alembic, Redis, OpenAI, JWT, Google Sign-In, Apple Sign-In, Flutter, Riverpod, Freezed, Dio, Docker, Codemagic."
 source: ""
 live: "https://www.lexigram.ai"

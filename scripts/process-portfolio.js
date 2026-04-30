@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const core = require('@actions/core');
@@ -65,7 +66,7 @@ async function run() {
 
     const genAI = new GoogleGenerativeAI(geminiApiKey);
     const CONTENT_MODELS = ['gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
-    const DIAGRAM_MODELS = ['gemini-3-flash', 'gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
+    const DIAGRAM_MODELS = ['gemini-3-flash-preview', 'gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
     const slug = slugify(data.title, { lower: true });
 
     // Optimization #4: Pre-fill frontmatter in code.

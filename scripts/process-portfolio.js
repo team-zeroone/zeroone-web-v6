@@ -351,9 +351,11 @@ function parseIssueBody(body) {
     else if (header.includes('gallery') || header.includes('screenshots') || header.includes('images')) {
         const matches = [...content.matchAll(/(?:!\[.*?\]\((.*?)\))|(http[^\s]+)/g)];
         if (matches.length > 0) {
-            data.gallery = matches.map(m => (m[1] || m[2]).replace(/["'\\\]\)]+$/, ''));
+            const urls = matches.map(m => (m[1] || m[2]).replace(/["'\\\]\)]+$/, ''));
+            data.gallery = [...new Set(urls)]; // Remove duplicates
         } else {
-            data.gallery = content.split('\n').map(line => line.trim()).filter(line => line.startsWith('http'));
+            const urls = content.split('\n').map(line => line.trim()).filter(line => line.startsWith('http'));
+            data.gallery = [...new Set(urls)]; // Remove duplicates
         }
     }
   });

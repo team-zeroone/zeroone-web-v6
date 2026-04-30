@@ -75,7 +75,7 @@ async function syncToWordPress() {
                 if (data.images && Array.isArray(data.images)) {
                     console.log(`\n--- Syncing ${data.images.length} gallery image(s) ---`);
                     for (let i = 0; i < data.images.length; i++) {
-                        const galleryImgId = await syncFeaturedImage(data.images[i], `${slug}-gallery-${i}`, wpHeaders);
+                        const galleryImgId = await syncFeaturedImage(data.images[i], `${slug}-gallery-${i + 1}`, wpHeaders);
                         if (galleryImgId) galleryImageIds.push(galleryImgId);
                     }
                 }
@@ -255,12 +255,10 @@ async function syncFeaturedImage(imageUrl, slug, wpHeaders) {
         
         // 0. Check if this image already exists in the WP Media Library (prevent duplicates)
         try {
-            const searchResponse = await axios.get(`${WP_API_URL}/wp/v2/media?search=${slug}&per_page=5`, {
+            const searchResponse = await axios.get(`${WP_API_URL}/wp/v2/media?slug=${slug}`, {
                 headers: wpHeaders
             });
-            const existing = searchResponse.data.find(m => 
-                m.slug === slug
-            );
+            const existing = searchResponse.data[0];
             if (existing) {
                 console.log(`Image already exists in Media Library (ID: ${existing.id}, slug: ${existing.slug}). Skipping upload.`);
                 return existing.id;

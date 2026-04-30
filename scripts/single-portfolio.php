@@ -39,7 +39,7 @@ get_header(); ?>
 
                 <a href="<?php echo get_post_type_archive_link('portfolio'); ?>"
                     style="display: inline-flex; align-items: center; color: #aab4c0; text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.2rem; margin-bottom: 48px; font-family: 'Outfit', sans-serif;">
-                    &larr; Back to projects
+                    &larr; Back to Portfolio
                 </a>
 
                 <header class="entry-header">
@@ -85,34 +85,34 @@ get_header(); ?>
 <?php get_footer(); ?>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const heroTrigger = document.getElementById('hero-trigger');
-    const lightbox = document.getElementById('zot-lightbox');
-    const lightboxImg = lightbox ? lightbox.querySelector('img') : null;
+    document.addEventListener('DOMContentLoaded', function () {
+        const heroTrigger = document.getElementById('hero-trigger');
+        const lightbox = document.getElementById('zot-lightbox');
+        const lightboxImg = lightbox ? lightbox.querySelector('img') : null;
 
-    function openLightbox(src) {
-        if (lightbox && lightboxImg) {
-            lightboxImg.src = src;
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
+        function openLightbox(src) {
+            if (lightbox && lightboxImg) {
+                lightboxImg.src = src;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
-    }
 
-    if (heroTrigger) {
-        heroTrigger.addEventListener('click', () => openLightbox(heroTrigger.src));
-    }
+        if (heroTrigger) {
+            heroTrigger.addEventListener('click', () => openLightbox(heroTrigger.src));
+        }
 
-    // Handle Gallery Triggers
-    const galleryTriggers = document.querySelectorAll('.gallery-trigger img');
-    galleryTriggers.forEach(img => {
-        img.addEventListener('click', () => openLightbox(img.src));
-    });
-
-    if (lightbox) {
-        lightbox.addEventListener('click', () => {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = '';
+        // Handle Gallery Triggers
+        const galleryTriggers = document.querySelectorAll('.gallery-trigger img');
+        galleryTriggers.forEach(img => {
+            img.addEventListener('click', () => openLightbox(img.src));
         });
-    }
-});
-</script>
+
+        if (lightbox) {
+            lightbox.addEventListener('click', () => {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+    });
+</script>

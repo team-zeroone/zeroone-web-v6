@@ -378,8 +378,30 @@ breaking the core UI logic.
 Summary: QueueUp is built for the "Service Economy 2.0." It combines a robust, domain-isolated Spring Boot backend with a high-fidelity, feature-sliced React frontend,
 delivering a premium SaaS experience that prioritizes security, data-driven decision-making, and effortless user flow.
 
-## Yantra ✓ Nimsara
+## Yantra ✓✓ Nimsara
+"Boastable" Engineering Achievements 
+1.  **Distributed Session & Cache-Bust Strategy**:  
+Our frontend implements a sophisticated **Session Rehydration** pattern using React Context and `localStorage`. To solve the "stale avatar" problem common in SPAs, we've integrated a **deterministic cache-busting mechanism** that auto-appends cryptographic timestamps to media URLs upon profile updates, ensuring instant UI synchronization without expensive global refreshes. 
+2.  **Multidimensional Geo-Hierarchy Service**:  
+Rather than flat lists, we've engineered a **recursive 3-level geographical service** (Province → District → City). The backend optimizes these lookups via JPA parent-child indexing, while the frontend handles these dependencies through dynamic, state-aware hooks that minimize payload size and latency. 
+3.  **Transactional Multi-Part Orchestration**:  
+Creating a machine listing isn't just a POST request; it's a transactional orchestration. We handle **complex multi-part data streams**—simultaneously processing relational metadata, primary image designation, and asynchronous file storage—all wrapped in Spring’s `@Transactional` boundary to ensure database-filesystem atomic integrity. 
+4.  **Proactive State Maintenance**:  
+The system utilizes **automated TTL (Time-To-Live) management** for listings. Using custom `@Modifying` JPQL queries, the backend proactively transitions listings from `AVAILABLE` to `EXPIRED` based on chosen durations, preventing stale data from accumulating—a critical feature for a high-velocity rental marketplace. 
 
+Design Philosophy & UX Innovations 
+1.  **Neo-Brutalist Visual Identity**:  
+We’ve moved away from "soft" SaaS aesthetics toward a **Neo-Brutalist aesthetic**. Using high-contrast palettes (Black, White, and #f1c40f "Caution Yellow") and bold typography, the UI mirrors the industrial, rugged nature of the machinery it serves. This creates an immediate psychological resonance with our target user base. 
+2.  **Contextual Dashboard Experience**:  
+The **Unified Admin Command Center** is built on a modular `DataTable` engine. It features specialized "Lazy Removal" UI logic—where brands being unlinked stay visible until the modal closes—to prevent jarring layout shifts during mass administrative edits. 
+3.  **Frictionless Seller Workflow**:  
+We implemented a **progressive disclosure form** for machine listings. Sellers aren't overwhelmed with fields; machine-specific metadata (like fuel type or brand availability) only populates once the primary category is selected, guided by real-time validation feedback.
+
+Engineering & Design Synergy 
+Engineering and design work in tandem to handle **scalability and usability**: 
+*   **Design for Scale**: The many-to-many relationship between `MachineType` and `MachineBrand` is exposed through a dynamic modal UI, allowing admins to scale the platform into new machinery categories without a single line of code change. 
+*   **Performance-First UI**: By leveraging `FetchType.LAZY` on the backend and **Debounced Search Hooks** on the frontend, we ensure the UI remains buttery smooth even as the database grows to thousands of active listings. 
+*   **RBAC-Driven Layouts**: Our `ProtectedRoute` architecture doesn't just block URLs; it shapes the entire UI surface area, conditionally rendering navigation and action bars based on user roles (Admin vs. Seller), creating a tailored experience for every user segment. This system is built not just to work, but to **endure and scale** in a specialized industrial market. 
 
 ---
 ✓ - Asked for the braindump from the dev

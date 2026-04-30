@@ -64,7 +64,8 @@ async function run() {
     // ========================================
 
     const genAI = new GoogleGenerativeAI(geminiApiKey);
-    const MODELS_TO_TRY = ['gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
+    const CONTENT_MODELS = ['gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
+    const DIAGRAM_MODELS = ['gemini-3-flash', 'gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
     const slug = slugify(data.title, { lower: true });
 
     // Optimization #4: Pre-fill frontmatter in code.
@@ -175,7 +176,7 @@ Rules:
     } else {
         if (forceRegen) console.log('\n--- Force Re-generation detected ([REGEN]) ---');
         
-        for (const modelId of MODELS_TO_TRY) {
+        for (const modelId of CONTENT_MODELS) {
             try {
                 console.log(`\n--- Attempting generation with ${modelId} ---`);
             const model = genAI.getGenerativeModel({
@@ -207,25 +208,30 @@ Rules:
                     refinedExcerpt = parsed.excerpt;
                     successfulModel = modelId;
 
-                    // Generate diagram
-                    try {
-                        console.log(`Generating Mermaid diagram with ${modelId}...`);
-                        const diagramModel = genAI.getGenerativeModel({ model: modelId, systemInstruction: mermaidSystemPrompt });
-                        const diagramResult = await diagramModel.generateContent(userPrompt);
-                        const diagramText = diagramResult.response.text();
-                        const mermaidInit = "%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'canvasBackground': '#ffffff', 'primaryColor': '#fff' }}}%%\n";
-                        const match = diagramText.match(/```mermaid\n([\s\S]*?)```/);
-                        if (match) {
-                            generatedDiagram = "```mermaid\n" + mermaidInit + match[1].trim() + "\n```";
-                            console.log('Successfully generated diagram.');
-                        } else if (diagramText.includes('graph ') || diagramText.includes('flowchart ')) {
-                            generatedDiagram = "```mermaid\n" + mermaidInit + diagramText.replace(/```mermaid/g, '').replace(/```/g, '').trim() + "\n```";
-                            console.log('Successfully generated diagram (recovered).');
-                        } else {
-                            console.warn('Failed to parse Mermaid diagram from output.');
+                    // Generate diagram with specific diagram stack
+                    for (const diagramModelId of DIAGRAM_MODELS) {
+                        try {
+                            console.log(`Attempting Mermaid diagram with ${diagramModelId}...`);
+                            const diagramModel = genAI.getGenerativeModel({ model: diagramModelId, systemInstruction: mermaidSystemPrompt });
+                            const diagramResult = await diagramModel.generateContent(userPrompt);
+                            const diagramText = diagramResult.response.text();
+                            const mermaidInit = "%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'canvasBackground': '#ffffff', 'primaryColor': '#fff' }}}%%\n";
+                            const match = diagramText.match(/```mermaid\n([\s\S]*?)```/);
+                            
+                            if (match) {
+                                generatedDiagram = "```mermaid\n" + mermaidInit + match[1].trim() + "\n```";
+                                console.log(`Successfully generated diagram with ${diagramModelId}.`);
+                                break;
+                            } else if (diagramText.includes('graph ') || diagramText.includes('flowchart ')) {
+                                generatedDiagram = "```mermaid\n" + mermaidInit + diagramText.replace(/```mermaid/g, '').replace(/```/g, '').trim() + "\n```";
+                                console.log(`Successfully generated diagram (recovered) with ${diagramModelId}.`);
+                                break;
+                            } else {
+                                console.warn(`Failed to parse Mermaid diagram from ${diagramModelId} output.`);
+                            }
+                        } catch (diagramErr) {
+                             console.warn(`Diagram generation failed with ${diagramModelId}: ${diagramErr.message}`);
                         }
-                    } catch (diagramErr) {
-                         console.warn(`Failed to generate diagram: ${diagramErr.message}`);
                     }
 
                     break;
@@ -242,8 +248,8 @@ Rules:
                 }
             } catch (modelErr) {
                 console.warn(`Model ${modelId} failed completely: ${modelErr.message}`);
-                if (modelId === MODELS_TO_TRY[MODELS_TO_TRY.length - 1]) {
-                    throw new Error(`All Gemini models in stack failed.`);
+                if (modelId === CONTENT_MODELS[CONTENT_MODELS.length - 1]) {
+                    throw new Error(`All Gemini models in content stack failed.`);
                 }
                 console.log('Switching to fallback model...');
             }

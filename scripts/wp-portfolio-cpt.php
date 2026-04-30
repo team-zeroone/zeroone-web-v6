@@ -37,7 +37,7 @@ function zot_register_portfolio_cpt()
 
     register_post_type('portfolio', $args);
 
-    $meta_fields = array('stack', 'source', 'live', 'hero_image_id', 'project_type');
+    $meta_fields = array('stack', 'source', 'live', 'hero_image_id', 'project_type', 'gallery_image_ids');
     foreach ($meta_fields as $field) {
         register_post_meta('portfolio', $field, array(
             'show_in_rest' => true,
@@ -164,6 +164,70 @@ function zot_portfolio_styles()
 
         .zot-lightbox.active img {
             transform: scale(1);
+        }
+
+        /* Gallery Grid (Bento style) */
+        .zot-gallery-container {
+            margin: 80px 0;
+            width: 100%;
+        }
+
+        .zot-gallery-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--zot-muted);
+            margin-bottom: 32px;
+            display: block;
+            opacity: 0.6;
+        }
+
+        .zot-gallery-grid {
+            column-count: 3;
+            column-gap: 20px;
+            width: 100%;
+        }
+
+        .zot-gallery-item {
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--zot-border);
+            cursor: zoom-in;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            background: #111;
+        }
+
+        .zot-gallery-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .zot-gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .zot-gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 1024px) {
+            .zot-gallery-grid {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .zot-gallery-grid {
+                column-count: 1;
+            }
         }
 
         /* Grid */
@@ -415,3 +479,39 @@ function zot_portfolio_meta_shortcode()
     return $output;
 }
 add_shortcode('zot_portfolio_meta', 'zot_portfolio_meta_shortcode');
+
+// 5. Shortcode: [zot_portfolio_gallery]
+function zot_portfolio_gallery_shortcode()
+{
+    global $post;
+    if ($post->post_type !== 'portfolio')
+        return '';
+
+    $gallery_ids_str = get_post_meta($post->ID, 'gallery_image_ids', true);
+    if (!$gallery_ids_str)
+        return '';
+
+    $gallery_ids = array_filter(explode(',', $gallery_ids_str));
+    if (empty($gallery_ids))
+        return '';
+
+    $output = '<div class="zot-gallery-container">';
+    $output .= '<span class="zot-gallery-title">Gallery</span>';
+    $output .= '<div class="zot-gallery-grid">';
+
+    foreach ($gallery_ids as $id) {
+        $img_url = wp_get_attachment_image_url($id, 'full');
+        if ($img_url) {
+            $output .= sprintf(
+                '<div class="zot-gallery-item gallery-trigger">
+                    <img src="%s" alt="Project Gallery Image">
+                </div>',
+                esc_url($img_url)
+            );
+        }
+    }
+
+    $output .= '</div></div>';
+    return $output;
+}
+add_shortcode('zot_portfolio_gallery', 'zot_portfolio_gallery_shortcode');

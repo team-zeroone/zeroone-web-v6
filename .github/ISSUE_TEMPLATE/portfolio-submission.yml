@@ -30,6 +30,13 @@ body:
     validations:
       required: true
   - type: textarea
+    id: gallery
+    attributes:
+      label: Gallery / Screenshots (Bento Grid)
+      placeholder: "Drag and drop multiple images here"
+    validations:
+      required: false
+  - type: textarea
     id: details
     attributes:
       label: Full Details (Brain Dump)

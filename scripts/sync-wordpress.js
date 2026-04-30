@@ -70,6 +70,16 @@ async function syncToWordPress() {
                     heroImageId = await syncFeaturedImage(data.hero_image, `${slug}-hero`, wpHeaders);
                 }
 
+                // 2.5 Handle Gallery Images
+                const galleryImageIds = [];
+                if (data.images && Array.isArray(data.images)) {
+                    console.log(`\n--- Syncing ${data.images.length} gallery image(s) ---`);
+                    for (let i = 0; i < data.images.length; i++) {
+                        const galleryImgId = await syncFeaturedImage(data.images[i], `${slug}-gallery-${i}`, wpHeaders);
+                        if (galleryImgId) galleryImageIds.push(galleryImgId);
+                    }
+                }
+
                 // 3. Prepare Payload
                 const payload = {
                     title: data.title,
@@ -82,6 +92,7 @@ async function syncToWordPress() {
                         source: data.source || '',
                         live: data.live || '',
                         hero_image_id: heroImageId ? String(heroImageId) : '',
+                        gallery_image_ids: galleryImageIds.join(','),
                         project_type: data.type || ''
                     }
                 };
@@ -142,6 +153,10 @@ async function syncToWordPress() {
                     }
                     if (existingPost.meta && existingPost.meta.hero_image_id) {
                         mediaToDelete.push(existingPost.meta.hero_image_id);
+                    }
+                    if (existingPost.meta && existingPost.meta.gallery_image_ids) {
+                        const gIds = existingPost.meta.gallery_image_ids.split(',').filter(id => id.length > 0);
+                        mediaToDelete.push(...gIds);
                     }
 
                     if (isDryRun) {

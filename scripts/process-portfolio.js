@@ -76,6 +76,7 @@ date: "${new Date().toISOString()}"
 excerpt: "{EXCERPT_PLACEHOLDER}"
 image: "${data.thumbnail || ''}"
 hero_image: "${data.hero_image || ''}"
+images: ${JSON.stringify(data.gallery || [])}
 stack: "${data.stack}"
 source: "${data.source_url || ''}"
 live: "${data.live_url || ''}"
@@ -340,6 +341,14 @@ function parseIssueBody(body) {
     else if (header.includes('tech stack')) data.stack = content;
     else if (header.includes('source url') || header.includes('github url')) data.source_url = content;
     else if (header.includes('live website url')) data.live_url = content;
+    else if (header.includes('gallery') || header.includes('screenshots') || header.includes('images')) {
+        const matches = [...content.matchAll(/(?:!\[.*?\]\((.*?)\))|(http[^\s]+)/g)];
+        if (matches.length > 0) {
+            data.gallery = matches.map(m => (m[1] || m[2]).replace(/["'\\\]\)]+$/, ''));
+        } else {
+            data.gallery = content.split('\n').map(line => line.trim()).filter(line => line.startsWith('http'));
+        }
+    }
   });
 
   return data;

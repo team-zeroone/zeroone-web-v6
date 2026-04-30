@@ -56,6 +56,9 @@ get_header(); ?>
                     <?php the_content(); ?>
                 </div>
 
+                <!-- Gallery Section -->
+                <?php echo do_shortcode('[zot_portfolio_gallery]'); ?>
+
                 <footer class="entry-footer"
                     style="margin: 120px 0 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center;">
                     <span
@@ -83,18 +86,32 @@ get_header(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const trigger = document.getElementById('hero-trigger');
+    const heroTrigger = document.getElementById('hero-trigger');
     const lightbox = document.getElementById('zot-lightbox');
+    const lightboxImg = lightbox ? lightbox.querySelector('img') : null;
 
-    if (trigger && lightbox) {
-        trigger.addEventListener('click', () => {
+    function openLightbox(src) {
+        if (lightbox && lightboxImg) {
+            lightboxImg.src = src;
             lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scroll
-        });
+            document.body.style.overflow = 'hidden';
+        }
+    }
 
+    if (heroTrigger) {
+        heroTrigger.addEventListener('click', () => openLightbox(heroTrigger.src));
+    }
+
+    // Handle Gallery Triggers
+    const galleryTriggers = document.querySelectorAll('.gallery-trigger img');
+    galleryTriggers.forEach(img => {
+        img.addEventListener('click', () => openLightbox(img.src));
+    });
+
+    if (lightbox) {
         lightbox.addEventListener('click', () => {
             lightbox.classList.remove('active');
-            document.body.style.overflow = ''; // Restore scroll
+            document.body.style.overflow = '';
         });
     }
 });

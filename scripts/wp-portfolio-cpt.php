@@ -184,8 +184,11 @@ function zot_portfolio_styles()
         }
 
         .zot-gallery-grid {
-            column-count: 3;
-            column-gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: masonry; /* Modern masonry standard */
+            align-items: start;
+            gap: 20px;
             width: 100%;
         }
 
@@ -501,11 +504,19 @@ function zot_portfolio_gallery_shortcode()
 
     foreach ($gallery_ids as $id) {
         $img_url = wp_get_attachment_image_url($id, 'full');
+        $meta = wp_get_attachment_metadata($id);
+        
+        $aspect_ratio = '';
+        if (!empty($meta['width']) && !empty($meta['height'])) {
+            $aspect_ratio = sprintf('style="aspect-ratio: %d / %d;"', $meta['width'], $meta['height']);
+        }
+
         if ($img_url) {
             $output .= sprintf(
-                '<div class="zot-gallery-item gallery-trigger">
-                    <img src="%s" alt="Project Gallery Image">
+                '<div class="zot-gallery-item gallery-trigger" %s>
+                    <img src="%s" alt="Project Gallery Image" loading="lazy">
                 </div>',
+                $aspect_ratio,
                 esc_url($img_url)
             );
         }

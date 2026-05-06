@@ -32,7 +32,7 @@ function zot_register_portfolio_cpt()
         'show_in_rest' => true,
         'menu_icon' => 'dashicons-portfolio',
         'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'),
-        'rewrite' => array('slug' => 'projects'),
+        'rewrite' => array('slug' => 'portfolio'),
     );
 
     register_post_type('portfolio', $args);

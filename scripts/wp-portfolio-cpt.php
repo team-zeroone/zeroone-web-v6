@@ -62,6 +62,7 @@ function zot_portfolio_styles()
             --zot-muted: #aab4c0;
             --zot-border: rgba(255, 255, 255, 0.06);
             --zot-accent: #ffffff;
+            --zot-zoom-level: 150%; /* Tweak this value to change zoom amount (e.g. 150%, 200%, 250%) */
         }
 
         .zot-grid-container {
@@ -145,7 +146,7 @@ function zot_portfolio_styles()
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
-            padding: 40px;
+            padding: 20px; /* Reduced from 40px for mobile spacing */
         }
 
         .zot-lightbox.active {
@@ -155,15 +156,84 @@ function zot_portfolio_styles()
 
         .zot-lightbox img {
             max-width: 900px;
-            max-height: 80vh;
+            width: 100%; /* Allows image to scale down on mobile viewports */
+            height: auto;
+            max-height: 85vh; /* Prevents vertical overflow */
             object-fit: contain;
             box-shadow: 0 40px 100px rgba(0,0,0,0.8);
             transform: scale(0.9);
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: zoom-in; /* Indicate that image can be zoomed */
         }
 
         .zot-lightbox.active img {
             transform: scale(1);
+        }
+
+        /* Lightbox Zoomed State */
+        .zot-lightbox.zoomed-active {
+            display: block;
+            overflow: auto;
+            padding: 40px 20px;
+        }
+
+        .zot-lightbox.zoomed-active img {
+            max-width: var(--zot-zoom-level);
+            width: var(--zot-zoom-level); /* Zoom size based on variable */
+            max-height: none;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+            cursor: zoom-out;
+            transform: none;
+        }
+
+        /* Lightbox Close Button */
+        .zot-lightbox-close {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            z-index: 10001;
+            line-height: 1;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+
+        .zot-lightbox-close:hover {
+            color: #ffffff;
+        }
+
+        /* Lightbox Navigation */
+        .zot-lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            padding: 20px;
+            user-select: none;
+            transition: color 0.3s ease;
+            z-index: 10000;
+        }
+        
+        .zot-lightbox-nav:hover {
+            color: #ffffff;
+        }
+        
+        .zot-lightbox-prev {
+            left: 10px;
+        }
+        
+        .zot-lightbox-next {
+            right: 10px;
+        }
+
+        .zot-lightbox.zoomed-active .zot-lightbox-nav {
+            display: none; /* Hide arrows when zoomed in */
         }
 
         /* Gallery Grid (Bento style) */
@@ -528,3 +598,23 @@ function zot_portfolio_gallery_shortcode()
     return $output;
 }
 add_shortcode('zot_portfolio_gallery', 'zot_portfolio_gallery_shortcode');
+
+// 6. Automatically route to custom templates from the plugin directory
+function zot_portfolio_templates($template)
+{
+    if (is_post_type_archive('portfolio')) {
+        $plugin_template = plugin_dir_path(__FILE__) . 'archive-portfolio.php';
+        if (file_exists($plugin_template)) {
+            return $plugin_template;
+        }
+    }
+    if (is_singular('portfolio')) {
+        $plugin_template = plugin_dir_path(__FILE__) . 'single-portfolio.php';
+        if (file_exists($plugin_template)) {
+            return $plugin_template;
+        }
+    }
+    return $template;
+}
+add_filter('template_include', 'zot_portfolio_templates', 99);
+

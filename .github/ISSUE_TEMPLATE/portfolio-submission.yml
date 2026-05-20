@@ -43,13 +43,17 @@ body:
       placeholder: Paste your rough notes, features, and everything Gemini should know.
     validations:
       required: true
-  - type: checkboxes
+  - type: dropdown
     id: use_ai
     attributes:
       label: AI Content Generation
+      description: "Would you like Gemini AI to generate a professional narrative and architecture diagram?"
       options:
-        - label: Generate professional narrative and architecture diagram using Gemini AI
-          default: true
+        - "Yes, generate with Gemini AI"
+        - "No, use my raw details verbatim"
+      default: 0
+    validations:
+      required: true
   - type: input
     id: stack
     attributes:

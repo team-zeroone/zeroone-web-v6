@@ -379,7 +379,7 @@ function parseIssueBody(body) {
         }
         else if (header.includes('full details')) data.details = content;
         else if (header.includes('ai content generation') || header.includes('use ai')) {
-            data.use_ai = content.includes('- [x]');
+            data.use_ai = !content.toLowerCase().includes('no');
         }
         else if (header.includes('tech stack')) data.stack = content;
         else if (header.includes('source url') || header.includes('github url')) data.source_url = content;

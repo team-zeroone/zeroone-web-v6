@@ -2,10 +2,10 @@
 title: "Effortless"
 slug: "effortless"
 type: "Tech & Design"
-date: "2026-05-20T10:33:57.740Z"
+date: "2026-05-20T12:52:49.329Z"
 excerpt: "A high-performance industrial asset management platform that streamlines complex field inspections through a unified, type-safe, and scalable multi-tenant architecture."
-image: "https://github.com/user-attachments/assets/08efb2c8-1886-4215-a8b8-37ba8f5fc993"
-hero_image: "https://github.com/user-attachments/assets/9603fd9f-4a74-4294-bd83-a7c0d94545ea"
+image: "https://github.com/user-attachments/assets/2233904d-bd9b-4a95-ac02-7460f29030b3"
+hero_image: "https://github.com/user-attachments/assets/2233904d-bd9b-4a95-ac02-7460f29030b3"
 images: ["https://github.com/user-attachments/assets/ed988a72-788c-486e-87fe-bb72553f27c8","https://github.com/user-attachments/assets/24008180-7e16-41aa-81a1-10307918e8ce"]
 stack: "Next JS,  tRPC, PostgreSQL, Prisma, Vercel"
 source: ""

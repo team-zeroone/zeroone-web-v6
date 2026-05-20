@@ -58,6 +58,11 @@ async function run() {
             data.thumbnail = 'https://ui.shadcn.com/placeholder.svg';
         }
 
+        // Default use_ai to true if not specified
+        if (data.use_ai === undefined) {
+            data.use_ai = true;
+        }
+
         console.log('Parsed data:', JSON.stringify(data, null, 2));
 
         // ========================================
@@ -185,6 +190,23 @@ Rules:
             generatedBody = existingContent.trim();
             refinedExcerpt = existingData.excerpt;
             hasExistingDiagram = existingData.has_diagram === true || existingContent.includes('```mermaid');
+        } else if (!data.use_ai) {
+            console.log(`\n--- AI Content Generation Disabled by Toggle ---`);
+            generatedBody = data.details || '';
+            
+            // Extract a clean excerpt from full details (first sentence or up to 150 characters)
+            const cleanText = (data.details || '')
+                .replace(/[#*`_\[\]]/g, '') // Strip markdown formatting characters
+                .replace(/\s+/g, ' ') // Clean extra whitespace
+                .trim();
+            
+            const sentenceMatch = cleanText.match(/^[^.!?]+[.!?]/);
+            let excerptCandidate = sentenceMatch ? sentenceMatch[0] : cleanText;
+            if (excerptCandidate.length > 150) {
+                excerptCandidate = excerptCandidate.substring(0, 147) + '...';
+            }
+            refinedExcerpt = excerptCandidate || 'A professional showcase by ZeroOne Technologies.';
+            successfulModel = 'skipped (AI disabled)';
         } else {
             if (forceRegen) console.log('\n--- Force Re-generation detected ([REGEN]) ---');
 
@@ -356,6 +378,9 @@ function parseIssueBody(body) {
             }
         }
         else if (header.includes('full details')) data.details = content;
+        else if (header.includes('ai content generation') || header.includes('use ai')) {
+            data.use_ai = content.includes('- [x]');
+        }
         else if (header.includes('tech stack')) data.stack = content;
         else if (header.includes('source url') || header.includes('github url')) data.source_url = content;
         else if (header.includes('live website url')) data.live_url = content;

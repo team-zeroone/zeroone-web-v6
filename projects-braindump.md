@@ -86,7 +86,7 @@ The project thrives on the **T3 Stack (Next.js, tRPC, Prisma)**, which ensures *
 Effortless, developed for Tronic Yaka Pvt Ltd, is a multi-tenant software solution that enables companies to register, manage, and analyze their electrical operations with ease. It streamlines monitoring and decision-making across multiple organizations.
 
 
-## StudyQ ✓✓ Shakthi
+## StudyQ ✓✓✓ Shakthi
 StudyQ is a student-centric learning platform that simplifies exam preparation through engaging and effective curated question bundles across various subjects. It allows educators and experts to create and share their own question sets, enhancing learning diversity. Ideal for school exam revision or concept reinforcement, StudyQ connects students and authors to make learning more accessible and impactful.
 Here is a high-level technical and design braindump of the StudyQ (qbank) platform. 
 
@@ -117,7 +117,7 @@ When a user initiates a trial, the API returns a pure entitlement. The Riverpod 
 In short: We have built a backend that scales gracefully for complex financial edge-cases, driving a frontend that feels impossibly lightweight, reactive, and visually stunning.
 
 
-## StudyReserve ✓✓ Charith
+## StudyReserve ✓✓✓ Charith
 By synthesizing the "DNA" from the Admin (SRM), API, Student Dashboards, and the Mobile/Desktop native shells, we have created a high-performance, multi-tenant, and security-hardened infrastructure designed for global educational scale.
 
 1. Architectural Core & Engineering Excellence
@@ -165,7 +165,7 @@ Design provides the trust and the "flow" (Atomic Design Primitives and Progressi
 The Result: An ecosystem that feels invincible to the administrator and premium to the student, setting a new high-water mark for educational platform engineering.
 
 
-## (Political Data Analysis Platform) ✓✓ Shakthi
+## (Political Data Analysis Platform) ✓✓✓ Shakthi
 A platform for analyzing political and regulatory data, enabling precise tracking of entities, legislation, and election activity with noise-free insights and AI-driven predictions.
 
 1. Architectural Sophistication & Scalability

@@ -9,6 +9,11 @@ const sharp = require('sharp');
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+function unescapeFilePath(filePath) {
+    if (!filePath) return '';
+    return filePath.replace(/\\([^\w\/\\])/g, '$1');
+}
+
 // Configuration from Environment Variables
 const WP_API_URL = process.env.WP_API_URL;
 const WP_USERNAME = process.env.WP_USERNAME;
@@ -35,9 +40,9 @@ async function syncToWordPress() {
     // Get files to process (Added/Modified)
     let files = [];
     if (process.env.ALL_CHANGED_FILES) {
-        files = process.env.ALL_CHANGED_FILES.split(' ').filter(f => f.endsWith('.md'));
+        files = process.env.ALL_CHANGED_FILES.split(' ').map(unescapeFilePath).filter(f => f.endsWith('.md'));
     } else {
-        files = process.argv.slice(2).filter(arg => arg.endsWith('.md'));
+        files = process.argv.slice(2).map(unescapeFilePath).filter(arg => arg.endsWith('.md'));
     }
 
     if (files.length > 0) {
@@ -134,7 +139,7 @@ async function syncToWordPress() {
     const deletedFiles = (process.env.DELETED_FILES || '').trim();
     if (deletedFiles) {
         // Accept both full paths (e.g. content/portfolio/test-1.md) and bare slugs (e.g. test-1)
-        const deletedPaths = deletedFiles.split(' ').filter(f => f.length > 0);
+        const deletedPaths = deletedFiles.split(' ').map(unescapeFilePath).filter(f => f.length > 0);
         console.log(`\n--- Processing ${deletedPaths.length} deleted file(s) ---`);
 
         for (const deletedPath of deletedPaths) {

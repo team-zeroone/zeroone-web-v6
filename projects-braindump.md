@@ -6,7 +6,7 @@ This file serves as a standalone repository for raw thoughts, ideas, and notes r
 Samarasekara Rice Mills – Dilmi Rice Products now operates with a custom-built software solution designed to manage their full business workflow. The system streamlines weighing, buying, and selling of paddy and rice while ensuring accuracy and efficiency. It also supports complete company operations, improving management.
 
 
-## AssetShield ✓✓ Charith
+## AssetShield ✓✓✓ Charith
 "Boastable" Engineering Achievements
 1. Agentic AI Workflows (LangGraph Integration)
 The crown jewel of Asset Shield’s backend is its AI-driven intelligence layer. Instead of simple LLM wrappers, we’ve implemented a state-machine architecture using LangGraph (ScheduleAISummaryAgentV2).
@@ -241,7 +241,7 @@ Designed and delivered a full-stack DevOps infrastructure for a multi-applicatio
 AIFamous helps businesses optimize content for ChatGPT, Claude, and Gemini through AI-powered analysis and intelligent content creation and automated publishing. AIFamous Agents track your brand's AI Visibility across the well known platform and suggest you how to optimize your content for Answer Engines.
 
 
-## Lexigram ✓✓ Chamika
+## Lexigram ✓✓✓ Chamika
 Lexigram is a mobile app that helps users learn French vocabulary through interactive tools like quizzes, puzzles, and word cards. It makes language learning engaging and fun by combining gamification with structured progress tracking and spaced repetition. Designed for learners of all levels, Lexigram supports gradual mastery of French words and their usage in context.
 
 "Boastable" Engineering Achievements

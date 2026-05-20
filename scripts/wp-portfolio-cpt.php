@@ -400,7 +400,9 @@ function zot_portfolio_grid_shortcode()
     $query = new WP_Query(array(
         'post_type' => 'portfolio',
         'posts_per_page' => -1,
-        'status' => 'publish'
+        'status' => 'publish',
+        'orderby' => 'date',
+        'order' => 'ASC'
     ));
 
     if (!$query->have_posts())

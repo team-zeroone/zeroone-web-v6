@@ -66,8 +66,8 @@ get_header(); ?>
                         Next Project
                     </span>
                     <?php
-                    // Use get_previous_post() because we want to go from newest to oldest (the order they appear on the grid)
-                    $next_post = get_previous_post();
+                    // Use get_next_post() because the grid is sorted chronologically ascending (first created first)
+                    $next_post = get_next_post();
                     if (!empty($next_post)): ?>
                         <a href="<?php echo get_permalink($next_post->ID); ?>"
                             style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: #ffffff; text-decoration: none;">

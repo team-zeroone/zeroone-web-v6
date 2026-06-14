@@ -11,10 +11,10 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function run() {
     try {
-        const geminiApiKey = process.env.GEMINI_API_KEY;
+        const geminiApiKey = process.env.GEMINI_GATEWAY_KEY || 'megha-gateway-key-123';
+        const gatewayUrl = process.env.GEMINI_GATEWAY_URL || 'https://ai-gateway.meghaj.workers.dev';
         const githubToken = process.env.GITHUB_TOKEN;
 
-        if (!geminiApiKey) throw new Error('GEMINI_API_KEY is missing');
         if (!githubToken) throw new Error('GITHUB_TOKEN is missing');
 
         const octokit = github.getOctokit(githubToken);
@@ -70,8 +70,7 @@ async function run() {
         // ========================================
 
         const genAI = new GoogleGenerativeAI(geminiApiKey);
-        const CONTENT_MODELS = ['gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
-        const DIAGRAM_MODELS = ['gemini-3-flash-preview', 'gemini-3.1-flash-lite-preview', 'gemini-2.5-flash'];
+        const aliases = ['alias-1', 'alias-2', 'alias-3'];
         const slug = slugify(data.title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
 
         // Optimization #4: Pre-fill frontmatter in code.
@@ -210,13 +209,16 @@ Rules:
         } else {
             if (forceRegen) console.log('\n--- Force Re-generation detected ([REGEN]) ---');
 
-            for (const modelId of CONTENT_MODELS) {
+            let lastError = null;
+            let generationSuccess = false;
+
+            for (const modelAlias of aliases) {
                 try {
-                    console.log(`\n--- Attempting generation with ${modelId} ---`);
-                    const model = genAI.getGenerativeModel({
-                        model: modelId,
-                        systemInstruction: systemPrompt,
-                    });
+                    console.log(`\n--- Attempting generation with ${modelAlias} ---`);
+                    const model = genAI.getGenerativeModel(
+                        { model: modelAlias, systemInstruction: systemPrompt },
+                        { baseUrl: gatewayUrl }
+                    );
 
                     const maxRetries = 3;
                     for (let i = 0; i < maxRetries; i++) {
@@ -240,13 +242,17 @@ Rules:
                             const parsed = parseOutput(text);
                             generatedBody = parsed.body;
                             refinedExcerpt = parsed.excerpt;
-                            successfulModel = modelId;
+                            successfulModel = modelAlias;
+                            generationSuccess = true;
 
                             // Generate diagram with specific diagram stack
-                            for (const diagramModelId of DIAGRAM_MODELS) {
+                            for (const diagramAlias of aliases) {
                                 try {
-                                    console.log(`Attempting Mermaid diagram with ${diagramModelId}...`);
-                                    const diagramModel = genAI.getGenerativeModel({ model: diagramModelId, systemInstruction: mermaidSystemPrompt });
+                                    console.log(`Attempting Mermaid diagram with ${diagramAlias}...`);
+                                    const diagramModel = genAI.getGenerativeModel(
+                                        { model: diagramAlias, systemInstruction: mermaidSystemPrompt },
+                                        { baseUrl: gatewayUrl }
+                                    );
                                     const diagramResult = await diagramModel.generateContent(userPrompt);
                                     const diagramText = diagramResult.response.text();
                                     const mermaidInit = "%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'canvasBackground': '#ffffff', 'primaryColor': '#fff' }}}%%\n";
@@ -254,17 +260,17 @@ Rules:
 
                                     if (match) {
                                         generatedDiagram = "```mermaid\n" + mermaidInit + match[1].trim() + "\n```";
-                                        console.log(`Successfully generated diagram with ${diagramModelId}.`);
+                                        console.log(`Successfully generated diagram with ${diagramAlias}.`);
                                         break;
                                     } else if (diagramText.includes('graph ') || diagramText.includes('flowchart ')) {
                                         generatedDiagram = "```mermaid\n" + mermaidInit + diagramText.replace(/```mermaid/g, '').replace(/```/g, '').trim() + "\n```";
-                                        console.log(`Successfully generated diagram (recovered) with ${diagramModelId}.`);
+                                        console.log(`Successfully generated diagram (recovered) with ${diagramAlias}.`);
                                         break;
                                     } else {
-                                        console.warn(`Failed to parse Mermaid diagram from ${diagramModelId} output.`);
+                                        console.warn(`Failed to parse Mermaid diagram from ${diagramAlias} output.`);
                                     }
                                 } catch (diagramErr) {
-                                    console.warn(`Diagram generation failed with ${diagramModelId}: ${diagramErr.message}`);
+                                    console.warn(`Diagram generation failed with ${diagramAlias}: ${diagramErr.message}`);
                                 }
                             }
 
@@ -272,21 +278,41 @@ Rules:
                         } catch (err) {
                             if (i === maxRetries - 1) throw err;
                             const waitTime = Math.pow(2, i + 1) * 1000;
-                            console.warn(`Gemini error (${modelId}): ${err.message}. Retrying in ${waitTime / 1000}s...`);
+                            console.warn(`Gemini error (${modelAlias}): ${err.message}. Retrying in ${waitTime / 1000}s...`);
                             await sleep(waitTime);
                         }
                     }
                     if (generatedBody) {
-                        console.log(`Successfully generated content using ${modelId}`);
+                        console.log(`Successfully generated content using ${modelAlias}`);
                         break;
                     }
                 } catch (modelErr) {
-                    console.warn(`Model ${modelId} failed completely: ${modelErr.message}`);
-                    if (modelId === CONTENT_MODELS[CONTENT_MODELS.length - 1]) {
-                        throw new Error(`All Gemini models in content stack failed.`);
-                    }
+                    lastError = modelErr;
+                    console.warn(`Model ${modelAlias} failed completely: ${modelErr.message}`);
                     console.log('Switching to fallback model...');
                 }
+            }
+
+            if (!generationSuccess) {
+                console.error("All model aliases failed:", lastError);
+                console.log('\n--- Applying baseline local defaults ---');
+                
+                generatedBody = data.details || '';
+                
+                // Extract a clean excerpt from full details (first sentence or up to 150 characters)
+                const cleanText = (data.details || '')
+                    .replace(/[#*`_\[\]]/g, '') // Strip markdown formatting characters
+                    .replace(/\s+/g, ' ') // Clean extra whitespace
+                    .trim();
+                
+                const sentenceMatch = cleanText.match(/^[^.!?]+[.!?]/);
+                let excerptCandidate = sentenceMatch ? sentenceMatch[0] : cleanText;
+                if (excerptCandidate.length > 150) {
+                    excerptCandidate = excerptCandidate.substring(0, 147) + '...';
+                }
+                refinedExcerpt = excerptCandidate || 'A professional showcase by ZeroOne Technologies.';
+                successfulModel = 'fallback-local-defaults';
+                generatedDiagram = ''; // No diagram
             }
         }
 

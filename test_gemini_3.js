@@ -2,32 +2,38 @@ require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 async function testModel() {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error('Error: GEMINI_API_KEY environment variable is not set.');
-    process.exit(1);
-  }
+  const apiKey = process.env.GEMINI_GATEWAY_KEY || "megha-gateway-key-123";
+  const gatewayUrl = process.env.GEMINI_GATEWAY_URL || "https://ai-gateway.meghaj.workers.dev";
 
+  console.log(`Initializing client using gateway key...`);
   const genAI = new GoogleGenerativeAI(apiKey);
-  const modelId = 'gemini-3-flash-preview';
+  const aliases = ["alias-1", "alias-2", "alias-3"];
+  let lastError = null;
 
-  console.log(`Testing model: ${modelId}...`);
-
-  try {
-    const model = genAI.getGenerativeModel({ model: modelId });
-    const result = await model.generateContent('Generate a simple Mermaid diagram flowchart for a "Hello World" app.');
-    const response = await result.response;
-    const text = response.text();
-    
-    console.log('\n--- Model Response ---');
-    console.log(text);
-    console.log('\n--- SUCCESS: Model is working! ---');
-  } catch (error) {
-    console.error('\n--- FAILURE: Model test failed ---');
-    console.error('Error Message:', error.message);
-    if (error.status) console.error('Status Code:', error.status);
-    process.exit(1);
+  for (const modelAlias of aliases) {
+    try {
+      console.log(`Testing model: ${modelAlias}...`);
+      const model = genAI.getGenerativeModel(
+        { model: modelAlias },
+        { baseUrl: gatewayUrl }
+      );
+      const result = await model.generateContent('Generate a simple Mermaid diagram flowchart for a "Hello World" app.');
+      const response = await result.response;
+      const text = response.text();
+      
+      console.log('\n--- Model Response ---');
+      console.log(text);
+      console.log(`\n--- SUCCESS: Model ${modelAlias} is working! ---`);
+      return;
+    } catch (error) {
+      lastError = error;
+      console.warn(`Failed with model: ${modelAlias}. Error:`, error.message);
+    }
   }
+
+  console.error('\n--- FAILURE: All model aliases failed ---');
+  console.error('Last Error Message:', lastError?.message);
+  process.exit(1);
 }
 
 testModel();
